@@ -1,7 +1,7 @@
-package dev.arthomnix.spaghettitrees.mixin;
+package io.github.veryuniqueusername.bettertrees.mixin;
 
-import dev.arthomnix.spaghettitrees.sapling.BetterBirchSaplingGenerator;
-import dev.arthomnix.spaghettitrees.sapling.BetterOakSaplingGenerator;
+import io.github.veryuniqueusername.bettertrees.sapling.BetterBirchSaplingGenerator;
+import io.github.veryuniqueusername.bettertrees.sapling.BetterOakSaplingGenerator;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.SaplingBlock;

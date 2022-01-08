@@ -1,4 +1,4 @@
-package dev.arthomnix.spaghettitrees.tree;
+package io.github.veryuniqueusername.bettertrees.tree;
 
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;

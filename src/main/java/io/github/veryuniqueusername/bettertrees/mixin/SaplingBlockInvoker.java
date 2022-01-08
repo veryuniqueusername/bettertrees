@@ -1,4 +1,4 @@
-package dev.arthomnix.spaghettitrees.mixin;
+package io.github.veryuniqueusername.bettertrees.mixin;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.SaplingBlock;

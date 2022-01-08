@@ -1,4 +1,4 @@
-package dev.arthomnix.spaghettitrees.tree;
+package io.github.veryuniqueusername.bettertrees.tree;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Blocks;
@@ -12,6 +12,8 @@ import net.minecraft.world.gen.decorator.*;
 import net.minecraft.world.gen.feature.PlacedFeature;
 import net.minecraft.world.gen.feature.PlacedFeatures;
 import net.minecraft.world.gen.feature.VegetationPlacedFeatures;
+
+import static io.github.veryuniqueusername.bettertrees.BetterTrees.MOD_ID;
 
 public class BetterTreesPlacedFeatures {
     // Tried to split generating a new PlacedFeature from a ConfiguredFeature out into a function.
@@ -268,44 +270,48 @@ public class BetterTreesPlacedFeatures {
             )
     );
 
+    public static Identifier identify(String path) {
+      return new Identifier(MOD_ID, path);
+    }
+
     public static void registerAll() {
-        RegistryKey<PlacedFeature> deadOakLog = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "dead_oak_log"));
-        RegistryKey<PlacedFeature> deadBirchLog = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "dead_birch_log"));
-        RegistryKey<PlacedFeature> oakStump = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "oak_stump"));
-        RegistryKey<PlacedFeature> birchStump = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "birch_stump"));
-        RegistryKey<PlacedFeature> undergrowthBush = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "undergrowth_bush"));
+        RegistryKey<PlacedFeature> deadOakLog = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("dead_oak_log"));
+        RegistryKey<PlacedFeature> deadBirchLog = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("dead_birch_log"));
+        RegistryKey<PlacedFeature> oakStump = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("oak_stump"));
+        RegistryKey<PlacedFeature> birchStump = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("birch_stump"));
+        RegistryKey<PlacedFeature> undergrowthBush = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("undergrowth_bush"));
 
-        RegistryKey<PlacedFeature> treeBetterOak = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_oak"));
-        RegistryKey<PlacedFeature> treeDeadOak = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "dead_oak"));
-        RegistryKey<PlacedFeature> treeBetterOakRareBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_oak_rare_bees"));
-        RegistryKey<PlacedFeature> treeBetterOakRegularBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_oak_regular_bees"));
-        RegistryKey<PlacedFeature> treeBetterOakMoreBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_oak_more_bees"));
-        RegistryKey<PlacedFeature> treeBetterSwampOak = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_swamp_oak"));
+        RegistryKey<PlacedFeature> treeBetterOak = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_oak"));
+        RegistryKey<PlacedFeature> treeDeadOak = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("dead_oak"));
+        RegistryKey<PlacedFeature> treeBetterOakRareBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_oak_rare_bees"));
+        RegistryKey<PlacedFeature> treeBetterOakRegularBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_oak_regular_bees"));
+        RegistryKey<PlacedFeature> treeBetterOakMoreBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_oak_more_bees"));
+        RegistryKey<PlacedFeature> treeBetterSwampOak = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_swamp_oak"));
 
-        RegistryKey<PlacedFeature> treeBetterBirch = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_birch"));
-        RegistryKey<PlacedFeature> treeDeadBirch = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "dead_birch"));
-        RegistryKey<PlacedFeature> treeTallDeadBirch = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "tall_dead_birch"));
-        RegistryKey<PlacedFeature> treeBetterBirchRareBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_birch_rare_bees"));
-        RegistryKey<PlacedFeature> treeTallBetterBirchRareBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "tall_better_birch_rare_bees"));
-        RegistryKey<PlacedFeature> treeBetterBirchRegularBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_birch_regular_bees"));
-        RegistryKey<PlacedFeature> treeBetterBirchMoreBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_birch_more_bees"));
+        RegistryKey<PlacedFeature> treeBetterBirch = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_birch"));
+        RegistryKey<PlacedFeature> treeDeadBirch = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("dead_birch"));
+        RegistryKey<PlacedFeature> treeTallDeadBirch = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("tall_dead_birch"));
+        RegistryKey<PlacedFeature> treeBetterBirchRareBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_birch_rare_bees"));
+        RegistryKey<PlacedFeature> treeTallBetterBirchRareBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("tall_better_birch_rare_bees"));
+        RegistryKey<PlacedFeature> treeBetterBirchRegularBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_birch_regular_bees"));
+        RegistryKey<PlacedFeature> treeBetterBirchMoreBees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_birch_more_bees"));
 
-        RegistryKey<PlacedFeature> betterForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_forest_trees"));
-        RegistryKey<PlacedFeature> betterFlowerForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_flower_forest_trees"));
-        RegistryKey<PlacedFeature> betterBirchForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_birch_forest_trees"));
-        RegistryKey<PlacedFeature> betterTallBirchForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_tall_birch_forest_trees"));
-        RegistryKey<PlacedFeature> betterPlainsTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_plains_trees"));
-        RegistryKey<PlacedFeature> betterWaterBiomeTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_water_biome_trees"));
-        RegistryKey<PlacedFeature> betterDarkForestVegetation = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_dark_forest_vegetation"));
-        RegistryKey<PlacedFeature> betterBambooJungleVegetation = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_bamboo_jungle_vegetation"));
-        RegistryKey<PlacedFeature> betterJungleTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_jungle_trees"));
-        RegistryKey<PlacedFeature> betterSparseJungleTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_sparse_jungle_trees"));
-        RegistryKey<PlacedFeature> betterSavannahTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_savannah_trees"));
-        RegistryKey<PlacedFeature> betterWindsweptSavannahTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_windswept_savannah_trees"));
-        RegistryKey<PlacedFeature> betterWindsweptHillsTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_windswept_hills_trees"));
-        RegistryKey<PlacedFeature> betterWindsweptForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_windswept_forest_trees"));
-        RegistryKey<PlacedFeature> betterSwampTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_swamp_trees"));
-        RegistryKey<PlacedFeature> betterBadlandsTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, new Identifier("spaghettitrees", "better_badlands_trees"));
+        RegistryKey<PlacedFeature> betterForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_forest_trees"));
+        RegistryKey<PlacedFeature> betterFlowerForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_flower_forest_trees"));
+        RegistryKey<PlacedFeature> betterBirchForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_birch_forest_trees"));
+        RegistryKey<PlacedFeature> betterTallBirchForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_tall_birch_forest_trees"));
+        RegistryKey<PlacedFeature> betterPlainsTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_plains_trees"));
+        RegistryKey<PlacedFeature> betterWaterBiomeTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_water_biome_trees"));
+        RegistryKey<PlacedFeature> betterDarkForestVegetation = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_dark_forest_vegetation"));
+        RegistryKey<PlacedFeature> betterBambooJungleVegetation = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_bamboo_jungle_vegetation"));
+        RegistryKey<PlacedFeature> betterJungleTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_jungle_trees"));
+        RegistryKey<PlacedFeature> betterSparseJungleTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_sparse_jungle_trees"));
+        RegistryKey<PlacedFeature> betterSavannahTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_savannah_trees"));
+        RegistryKey<PlacedFeature> betterWindsweptSavannahTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_windswept_savannah_trees"));
+        RegistryKey<PlacedFeature> betterWindsweptHillsTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_windswept_hills_trees"));
+        RegistryKey<PlacedFeature> betterWindsweptForestTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_windswept_forest_trees"));
+        RegistryKey<PlacedFeature> betterSwampTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_swamp_trees"));
+        RegistryKey<PlacedFeature> betterBadlandsTrees = RegistryKey.of(Registry.PLACED_FEATURE_KEY, identify("better_badlands_trees"));
 
         Registry.register(BuiltinRegistries.PLACED_FEATURE, deadOakLog.getValue(), DEAD_OAK_LOG);
         Registry.register(BuiltinRegistries.PLACED_FEATURE, deadBirchLog.getValue(), DEAD_BIRCH_LOG);

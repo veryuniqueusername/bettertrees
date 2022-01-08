@@ -1,4 +1,4 @@
-package dev.arthomnix.spaghettitrees.mixin;
+package io.github.veryuniqueusername.bettertrees.mixin;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.world.gen.trunk.TrunkPlacer;

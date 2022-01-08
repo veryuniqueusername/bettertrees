@@ -1,25 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "spaghettitrees",
+  "id": "bettertrees",
   "version": "${version}",
-  "name": "SpaghettiTrees",
+  "name": "BetterTrees",
   "description": "Mildly cursed custom tree generation mod",
-  "authors": [{"name":  "arthomnix", "contact": {"homepage":  "https://github.com/arthomnix"}}],
+  "authors": [{"name":  "veryuniqueusername", "contact": {"homepage":  "https://github.com/veryuniqueusername"}}],
   "contact": {
-    "homepage": "https://modrinth.com/mod/spaghettitrees",
-    "issues": "https://github.com/arthomnix/spaghettitrees/issues",
-    "sources": "https://github.com/arthomnix/spaghettitrees"
+    "issues": "https://github.com/veryuniqueusername/bettertrees/issues",
+    "sources": "https://github.com/veryuniqueusername/bettertrees"
   },
   "license": "MIT",
-  "icon": "assets/spaghettitrees/icon.png",
+  "icon": "assets/bettertrees/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "dev.arthomnix.spaghettitrees.SpaghettiTrees"
+      "io.github.veryuniqueusername.bettertrees.BetterTrees"
     ]
   },
   "mixins": [
-    "spaghettitrees.mixins.json"
+    "bettertrees.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.12.9",
