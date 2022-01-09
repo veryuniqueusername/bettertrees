@@ -15,17 +15,17 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
 
-public class DeadLogTrunkPlacer extends BetterTrunkPlacer {
-    public static final Codec<DeadLogTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
-            fillTrunkPlacerFields(instance).apply(instance, DeadLogTrunkPlacer::new));
+public class DeadOakTrunkPlacer extends BetterOakTrunkPlacer {
+    public static final Codec<DeadOakTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
+            fillTrunkPlacerFields(instance).apply(instance, DeadOakTrunkPlacer::new));
 
-    public DeadLogTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
+    public DeadOakTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
         super(baseHeight, firstRandomHeight, secondRandomHeight, 0.25D, 2D, 2, 6, 0D, 1D, 0D, 1D);
     }
 
     @Override
     protected TrunkPlacerType<?> getType() {
-        return BetterTreesConfiguredFeatures.DEAD_LOG_TRUNK_PLACER;
+        return BetterTreesConfiguredFeatures.DEAD_OAK_TRUNK_PLACER;
     }
 
     public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {

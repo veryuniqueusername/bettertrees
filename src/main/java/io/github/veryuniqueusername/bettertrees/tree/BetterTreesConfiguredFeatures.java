@@ -16,6 +16,7 @@ import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
 import net.minecraft.world.gen.foliage.BlobFoliagePlacer;
 import net.minecraft.world.gen.foliage.BushFoliagePlacer;
 import net.minecraft.world.gen.foliage.LargeOakFoliagePlacer;
+import net.minecraft.world.gen.foliage.RandomSpreadFoliagePlacer;
 import net.minecraft.world.gen.treedecorator.BeehiveTreeDecorator;
 import net.minecraft.world.gen.treedecorator.LeavesVineTreeDecorator;
 import net.minecraft.world.gen.treedecorator.TrunkVineTreeDecorator;
@@ -28,8 +29,10 @@ import static io.github.veryuniqueusername.bettertrees.BetterTrees.MOD_ID;
 
 
 public class BetterTreesConfiguredFeatures {
-    public static final TrunkPlacerType<BetterTrunkPlacer> BETTER_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_trunk_placer", BetterTrunkPlacer.CODEC);
-    public static final TrunkPlacerType<DeadLogTrunkPlacer> DEAD_LOG_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("dead_log_trunk_placer", DeadLogTrunkPlacer.CODEC);
+    public static final TrunkPlacerType<BetterOakTrunkPlacer> BETTER_OAK_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_oak_trunk_placer", BetterOakTrunkPlacer.CODEC);
+    public static final TrunkPlacerType<DeadOakTrunkPlacer> DEAD_OAK_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("dead_oak_trunk_placer", DeadOakTrunkPlacer.CODEC);
+
+    public static final TrunkPlacerType<BetterBirchTrunkPlacer> BETTER_BIRCH_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_birch_trunk_placer", BetterBirchTrunkPlacer.CODEC);
 
     private static final BeehiveTreeDecorator BEES_RARE = new BeehiveTreeDecorator(0.002f);
     private static final BeehiveTreeDecorator BEES_REGULAR = new BeehiveTreeDecorator(0.02f);
@@ -236,9 +239,9 @@ public class BetterTreesConfiguredFeatures {
     private static TreeFeatureConfig.Builder oakBuilder(boolean dead) {
         return new TreeFeatureConfig.Builder(
                 SimpleBlockStateProviderInvoker.invokeCtor(Blocks.OAK_WOOD.getDefaultState()),
-                new BetterTrunkPlacer(26, 26, 0, 0.85D, 1.25D, 0, 5, 0D, 1D, 0.3D, 0.95D),
+                new BetterOakTrunkPlacer(5, 5, 4, 1.50D, 5D, 3, 5, 0D, 0.2D, 0.9D, 1.5D),
                 SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.OAK_LEAVES).getDefaultState()),
-                new LargeOakFoliagePlacer(BiasedToBottomIntProvider.create(1, 2), ConstantIntProvider.create(0), 2),
+                new LargeOakFoliagePlacer(BiasedToBottomIntProvider.create(2, 3), ConstantIntProvider.create(0), 3),
                 new TwoLayersFeatureSize(5, 0, 10)
         );
     }
@@ -246,9 +249,9 @@ public class BetterTreesConfiguredFeatures {
     private static TreeFeatureConfig.Builder birchBuilder(boolean tall, boolean dead) {
         return new TreeFeatureConfig.Builder(
                 SimpleBlockStateProviderInvoker.invokeCtor(Blocks.BIRCH_WOOD.getDefaultState()),
-                new BetterTrunkPlacer(tall ? 10 : 5, tall ? 10 : 3, 0, 0.75D, 2D, 2, 5, 0D, 1D, 0.45D, 1D),
+                new BetterBirchTrunkPlacer(tall ? 15 : 8, tall ? 15 : 8, 1, 0.7D, 2D, 2, 5, 0D, 0.7D, 1D, 1D),
                 SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.BIRCH_LEAVES).getDefaultState()),
-                new LargeOakFoliagePlacer(BiasedToBottomIntProvider.create(1, 2), ConstantIntProvider.create(0), 2),
+                new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(1, 3), ConstantIntProvider.create(0), BiasedToBottomIntProvider.create(2, 4), 100),
                 new TwoLayersFeatureSize(5, 0, 10)
         );
     }
@@ -256,7 +259,7 @@ public class BetterTreesConfiguredFeatures {
     private static TreeFeatureConfig.Builder deadLogBuilder(Block block) {
         return new TreeFeatureConfig.Builder(
                 SimpleBlockStateProviderInvoker.invokeCtor(block.getDefaultState()),
-                new DeadLogTrunkPlacer(4, 6, 0),
+                new DeadOakTrunkPlacer(4, 6, 0),
                 SimpleBlockStateProviderInvoker.invokeCtor(Blocks.AIR.getDefaultState()),
                 new BlobFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0), 0),
                 new TwoLayersFeatureSize(1, 10, 10)
@@ -266,7 +269,7 @@ public class BetterTreesConfiguredFeatures {
     private static TreeFeatureConfig.Builder stumpBuilder(Block block) {
         return new TreeFeatureConfig.Builder(
                 SimpleBlockStateProviderInvoker.invokeCtor(block.getDefaultState()),
-                new BetterTrunkPlacer(1, 2, 0),
+                new BetterOakTrunkPlacer(1, 2, 0),
                 SimpleBlockStateProviderInvoker.invokeCtor(Blocks.AIR.getDefaultState()),
                 new BlobFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0), 0),
                 new TwoLayersFeatureSize(1, 2, 1)
@@ -278,7 +281,7 @@ public class BetterTreesConfiguredFeatures {
                 SimpleBlockStateProviderInvoker.invokeCtor(Blocks.OAK_WOOD.getDefaultState()),
                 new StraightTrunkPlacer(1, 1, 0),
                 SimpleBlockStateProviderInvoker.invokeCtor(Blocks.OAK_LEAVES.getDefaultState()),
-                new BushFoliagePlacer(BiasedToBottomIntProvider.create(1, 2), ConstantIntProvider.create(1), 2),
+                new BushFoliagePlacer(BiasedToBottomIntProvider.create(1, 2), ConstantIntProvider.create(1), 3),
                 new TwoLayersFeatureSize(1, 2, 2)
         );
     }
