@@ -125,7 +125,7 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 				//				if (nodesAllAlong && (random.nextDouble() < 0.55 || i == length - 1))
 				//					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 0, false));
 				//				else
-				if (i > (length - 8) && level == 0) // generate more leaves at the top of the branch
+				if (i > (length - 5) && level == 0) // generate more leaves at the top of the branch
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
 				else if (i > (length - 8))
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
@@ -138,7 +138,7 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 					Direction newDirection = Direction.UP;
 					BlockPos newEndPos = bendPos(startPos, i).offset(newDirection, newLength);
 					int newBranchHeight = newEndPos.getY() - rootPos.getY();
-					if (newLength > 0 && (newEndPos.getManhattanDistance(rootPos) < (20 + newBranchHeight / 2))) { // restrict distance branches can be from the trunk
+					if (newLength > 0 && (newEndPos.getManhattanDistance(rootPos) < (15 + newBranchHeight / 2))) { // restrict distance branches can be from the trunk
 						Branch branch = new Branch(world, replacer, random, bendPos(startPos, i), rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(minLeftBias, maxLeftBias), getDoubleInRange(minUpBias, maxUpBias), (0.2 * random.nextDouble()) + 0, true);
 						list.addAll(branch.generate());
 					}

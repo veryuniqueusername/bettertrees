@@ -220,7 +220,7 @@ public class BetterTreesConfiguredFeatures {
 		if (tall) {
 			return new TreeFeatureConfig.Builder(
 				SimpleBlockStateProviderInvoker.invokeCtor(Blocks.BIRCH_WOOD.getDefaultState()),
-				new BetterTallBirchTrunkPlacer(12, 10, 1, 0.5D, 2D, 2, 10, 0D, 0.5D, 1D, 1D),
+				new BetterTallBirchTrunkPlacer(7, 10, 1, 0.5D, 2D, 2, 10, 0D, 0.5D, 1D, 1D),
 				SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.BIRCH_LEAVES).getDefaultState()),
 				new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(1, 3), ConstantIntProvider.create(0), BiasedToBottomIntProvider.create(2, 5), 50),
 				new TwoLayersFeatureSize(10, 1, 6)
@@ -228,7 +228,7 @@ public class BetterTreesConfiguredFeatures {
 		}
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.BIRCH_WOOD.getDefaultState()),
-			new BetterShortBirchTrunkPlacer(12, 6, 1, 0.7D, 2D, 2, 5, 0D, 0.5D, 1D, 1D),
+			new BetterShortBirchTrunkPlacer(3, 8, 1, 0.7D, 2D, 2, 7, 0D, 0.5D, 1D, 1D),
 			SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.BIRCH_LEAVES).getDefaultState()),
 			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(1, 3), ConstantIntProvider.create(0), BiasedToBottomIntProvider.create(2, 4), 30),
 			new TwoLayersFeatureSize(5, 1, 5)
