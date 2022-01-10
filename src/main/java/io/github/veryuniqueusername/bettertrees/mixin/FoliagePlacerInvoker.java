@@ -13,6 +13,6 @@ import java.util.function.BiConsumer;
 
 @Mixin(FoliagePlacer.class)
 public interface FoliagePlacerInvoker {
-	@Invoker
-	void callGenerateSquare(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, BlockPos centerPos, int radius, int y, boolean giantTrunk);
+    @Invoker
+    void callGenerateSquare(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, BlockPos centerPos, int radius, int y, boolean giantTrunk);
 }

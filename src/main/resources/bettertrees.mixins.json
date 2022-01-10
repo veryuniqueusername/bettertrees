@@ -8,11 +8,9 @@
     "DefaultBiomeCreatorMixin",
     "DefaultBiomeFeaturesMixin",
     "FoliagePlacerInvoker",
-    "FoliagePlacerTypeInvoker",
     "LargeOakFoliagePlacerMixin",
     "SaplingBlockInvoker",
     "SimpleBlockStateProviderInvoker",
-    "TreeDecoratorTypeInvoker",
     "TreeFeatureMixin",
     "TrunkPlacerTypeInvoker"
   ],

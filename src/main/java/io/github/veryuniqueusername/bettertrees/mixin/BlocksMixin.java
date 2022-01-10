@@ -1,7 +1,6 @@
 package io.github.veryuniqueusername.bettertrees.mixin;
 
 import io.github.veryuniqueusername.bettertrees.sapling.BetterBirchSaplingGenerator;
-import io.github.veryuniqueusername.bettertrees.sapling.BetterJungleSaplingGenerator;
 import io.github.veryuniqueusername.bettertrees.sapling.BetterOakSaplingGenerator;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Blocks;
@@ -21,10 +20,5 @@ public class BlocksMixin {
     @Redirect(method = "<clinit>", at = @At(target = "net/minecraft/block/SaplingBlock", value = "NEW", ordinal = 2))
     private static SaplingBlock returnBetterBirchSaplingBlock(SaplingGenerator generator, AbstractBlock.Settings settings) {
         return SaplingBlockInvoker.invokeCtor(new BetterBirchSaplingGenerator(), settings);
-    }
-
-    @Redirect(method = "<clinit>", at = @At(target = "net/minecraft/block/SaplingBlock", value = "NEW", ordinal = 3))
-    private static SaplingBlock returnBetterJungleSaplingBlock(SaplingGenerator generator, AbstractBlock.Settings settings) {
-        return SaplingBlockInvoker.invokeCtor(new BetterJungleSaplingGenerator(), settings);
     }
 }
