@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
 
-public class DeadOakTrunkPlacer extends BetterOakTrunkPlacer {
-    public static final Codec<DeadOakTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
-            fillTrunkPlacerFields(instance).apply(instance, DeadOakTrunkPlacer::new));
+public class DeadLogTrunkPlacer extends BetterOakTrunkPlacer {
+    public static final Codec<DeadLogTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
+            fillTrunkPlacerFields(instance).apply(instance, DeadLogTrunkPlacer::new));
 
-    public DeadOakTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
+    public DeadLogTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
         super(baseHeight, firstRandomHeight, secondRandomHeight, 0.25D, 2D, 2, 6, 0D, 1D, 0D, 1D);
     }
 
