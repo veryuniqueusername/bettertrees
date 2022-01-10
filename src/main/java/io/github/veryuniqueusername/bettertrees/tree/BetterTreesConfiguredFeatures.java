@@ -3,7 +3,7 @@ package io.github.veryuniqueusername.bettertrees.tree;
 import com.google.common.collect.ImmutableList;
 import io.github.veryuniqueusername.bettertrees.mixin.FoliagePlacerTypeInvoker;
 import io.github.veryuniqueusername.bettertrees.mixin.SimpleBlockStateProviderInvoker;
-//import io.github.veryuniqueusername.bettertrees.mixin.TreeDecoratorTypeInvoker;
+import io.github.veryuniqueusername.bettertrees.mixin.TreeDecoratorTypeInvoker;
 import io.github.veryuniqueusername.bettertrees.mixin.TrunkPlacerTypeInvoker;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
@@ -39,7 +39,7 @@ public class BetterTreesConfiguredFeatures {
 
 	public static final FoliagePlacerType<BetterJungleFoliagePlacer> BETTER_JUNGLE_FOLIAGE_PLACER = FoliagePlacerTypeInvoker.callRegister("better_jungle_foliage_placer", BetterJungleFoliagePlacer.CODEC);
 
-//	public static final TreeDecoratorType<BetterCocoaBeansTreeDecorator> BETTER_COCOA_BEANS_DECORATOR = TreeDecoratorTypeInvoker.callRegister("better_cocoa_beans_decorator", BetterCocoaBeansTreeDecorator.CODEC);
+	public static final TreeDecoratorType<BetterCocoaBeansTreeDecorator> BETTER_COCOA_BEANS_DECORATOR = TreeDecoratorTypeInvoker.callRegister("better_cocoa_beans_decorator", BetterCocoaBeansTreeDecorator.CODEC);
 
 
 	private static final BeehiveTreeDecorator BEES_RARE = new BeehiveTreeDecorator(0.002f);
@@ -75,7 +75,7 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_BIRCH_REGULAR_BEES = Feature.TREE.configure(birchBuilder(false, false).decorators(ImmutableList.of(BEES_REGULAR)).build());
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_BIRCH_MORE_BEES = Feature.TREE.configure(birchBuilder(false, false).decorators(ImmutableList.of(BEES_COMMON)).build());
 
-	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_JUNGLE = Feature.TREE.configure(jungleBuilder(false).decorators(ImmutableList.of(LeavesVineTreeDecorator.INSTANCE)).build());
+	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_JUNGLE = Feature.TREE.configure(jungleBuilder(false).decorators(ImmutableList.of(new BetterCocoaBeansTreeDecorator(0.2f), TrunkVineTreeDecorator.INSTANCE, LeavesVineTreeDecorator.INSTANCE)).build());
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_JUNGLE_NO_VINE = Feature.TREE.configure(jungleBuilder(false).build());
 
 	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_FOREST_TREES = Feature.RANDOM_SELECTOR.configure(

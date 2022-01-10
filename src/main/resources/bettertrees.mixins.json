@@ -12,7 +12,7 @@
     "LargeOakFoliagePlacerMixin",
     "SaplingBlockInvoker",
     "SimpleBlockStateProviderInvoker",
-//    "TreeDecoratorTypeInvoker",
+    "TreeDecoratorTypeInvoker",
     "TreeFeatureMixin",
     "TrunkPlacerTypeInvoker"
   ],
