@@ -17,45 +17,31 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
 
-public class BetterOakTrunkPlacer extends TrunkPlacer {
-	private final int branchLengthModifier; // gets subtracted from the length of each new Branch (parent branch level > 0)
-	private final int initialBranchLengthModifier; // gets subtracted from the length of each new Branch generated off the trunk
+public class BetterJungleTrunkPlacer extends TrunkPlacer {
 	private final double branchProbabilityModifier;
-	private final double subBranchProbabilityDivisor;
-	private final double minLeftBias;
-	private final double maxLeftBias;
-	private final double minUpBias;
-	private final double maxUpBias;
 
-	public static final Codec<BetterOakTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
-		fillTrunkPlacerFields(instance).apply(instance, BetterOakTrunkPlacer::new));
+	public static final Codec<BetterJungleTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
+		fillTrunkPlacerFields(instance).apply(instance, BetterJungleTrunkPlacer::new));
 
-	public BetterOakTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
-		this(baseHeight, firstRandomHeight, secondRandomHeight, 1.50D, 5D, 3, 5, 0D, 0.4D, 0.9D, 1D);
+	public BetterJungleTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
+		this(baseHeight, firstRandomHeight, secondRandomHeight, 0.2D);
 	}
 
-	public BetterOakTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight, double branchProbabilityModifier, double subBranchProbabilityDivisor, int branchLengthModifier, int initialBranchLengthModifier, double minLeftBias, double maxLeftBias, double minUpBias, double maxUpBias) {
+	public BetterJungleTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight, double branchProbabilityModifier) {
 		super(baseHeight, firstRandomHeight, secondRandomHeight);
-		this.branchLengthModifier = branchLengthModifier;
-		this.initialBranchLengthModifier = initialBranchLengthModifier;
 		this.branchProbabilityModifier = branchProbabilityModifier;
-		this.subBranchProbabilityDivisor = subBranchProbabilityDivisor;
-		this.minLeftBias = minLeftBias;
-		this.maxLeftBias = maxLeftBias;
-		this.minUpBias = minUpBias;
-		this.maxUpBias = maxUpBias;
 	}
 
 	@Override
 	protected TrunkPlacerType<?> getType() {
-		return BetterTreesConfiguredFeatures.BETTER_OAK_TRUNK_PLACER;
+		return BetterTreesConfiguredFeatures.BETTER_JUNGLE_TRUNK_PLACER;
 	}
 
 	@Override
 	public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
 		setToDirt(world, replacer, random, startPos.down(), config);
 		// The trunk is a branch
-		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 2, 0d, 0d, 0.25d, false);
+		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 1, 0d, 0d, 0.1d, false);
 		// generate roots
 		for (int i = 2; i < 6; ++i) {
 			if (random.nextDouble() < 0.5D) {
@@ -125,20 +111,14 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 				if (nodesAllAlong && (random.nextDouble() < 0.75 || i == length - 1))
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 0, false));
 				else if (i == (length - 1) && level == 0) // generate more leaves at the top of the trunk
-					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
+					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, true));
 				updateBend();
-				// generates a sub-branch
+				// generates a branch
 				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel)) {
-					int newLength = length - (random.nextInt(2) + 1);
-					if (level == 0) newLength = newLength - initialBranchLengthModifier;
-					else newLength = newLength - branchLengthModifier;
-					Direction newDirection = chooseFromAllowedDirections();
-					BlockPos newEndPos = bendPos(startPos, i).offset(newDirection, newLength);
-					int newBranchHeight = newEndPos.getY() - rootPos.getY();
-					if (newLength > 0 && (newEndPos.getManhattanDistance(rootPos) < (16 + newBranchHeight / 2))) { // restrict distance branches can be from the trunk
-						Branch branch = new Branch(world, replacer, random, bendPos(startPos, i), rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(minLeftBias, maxLeftBias), getDoubleInRange(minUpBias, maxUpBias), (0.6 * random.nextDouble()) + 0, true);
-						list.addAll(branch.generate());
-					}
+					int newLength = random.nextInt(2) + 1;
+					Direction newDirection = Direction.byId(random.nextInt(5) + 1);
+					Branch branch = new Branch(world, replacer, random, bendPos(startPos, i), rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(0d, 1d), getDoubleInRange(0d, 1d), (0.6 * random.nextDouble()) + 0, true);
+					list.addAll(branch.generate());
 				}
 			}
 			return list;
@@ -153,10 +133,6 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 				if (random.nextDouble() < upBias) bendUp++;
 				else bendUp--;
 			}
-		}
-
-		private Direction chooseFromAllowedDirections() {
-			return Direction.byId(random.nextInt(5) + 1);
 		}
 
 		private BlockPos bendPos(BlockPos startPos, int i, Direction direction) {
@@ -186,7 +162,7 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 			if (this.level == 0) {
 				double normalizedHeight = (double) height / maxHeight;
 				return gaussian(normalizedHeight, modifier, 0.75D, 0.2D);
-			} else return modifier / subBranchProbabilityDivisor;
+			} else return modifier / 2d;
 		}
 
 		private double gaussian(double x, double a, double b, double c) {

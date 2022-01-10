@@ -35,6 +35,8 @@ public class BetterTreesConfiguredFeatures {
 	public static final TrunkPlacerType<BetterTallBirchTrunkPlacer> BETTER_TALL_BIRCH_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_tall_birch_trunk_placer", BetterTallBirchTrunkPlacer.CODEC);
 	public static final TrunkPlacerType<BetterShortBirchTrunkPlacer> BETTER_SHORT_BIRCH_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_short_birch_trunk_placer", BetterShortBirchTrunkPlacer.CODEC);
 
+	public static final TrunkPlacerType<BetterJungleTrunkPlacer> BETTER_JUNGLE_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_jungle_trunk_placer", BetterJungleTrunkPlacer.CODEC);
+
 	private static final BeehiveTreeDecorator BEES_RARE = new BeehiveTreeDecorator(0.002f);
 	private static final BeehiveTreeDecorator BEES_REGULAR = new BeehiveTreeDecorator(0.02f);
 	private static final BeehiveTreeDecorator BEES_COMMON = new BeehiveTreeDecorator(0.05f);
@@ -210,7 +212,7 @@ public class BetterTreesConfiguredFeatures {
 	private static TreeFeatureConfig.Builder oakBuilder(boolean dead) {
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.OAK_WOOD.getDefaultState()),
-			new BetterOakTrunkPlacer(5, 5, 4, 1.50D, 5D, 3, 5, 0D, 0.2D, 0.9D, 1.5D),
+			new BetterOakTrunkPlacer(5, 5, 4, 1.50D, 5D, 3, 5, 0D, 0.4D, 0.9D, 1D),
 			SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.OAK_LEAVES).getDefaultState()),
 			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(2, 3), ConstantIntProvider.create(0), ConstantIntProvider.create(3), 50),
 			new TwoLayersFeatureSize(5, 0, 5)
@@ -239,9 +241,9 @@ public class BetterTreesConfiguredFeatures {
 	private static TreeFeatureConfig.Builder jungleBuilder(boolean dead) {
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.JUNGLE_WOOD.getDefaultState()),
-			new BetterOakTrunkPlacer(5, 5, 4, 1.50D, 5D, 3, 5, 0D, 0.2D, 0.9D, 1.5D),
+			new BetterJungleTrunkPlacer(8, 20, 15, 0.2D),
 			SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.JUNGLE_LEAVES).getDefaultState()),
-			new LargeOakFoliagePlacer(BiasedToBottomIntProvider.create(2, 3), ConstantIntProvider.create(0), 2),
+			new LargeOakFoliagePlacer(BiasedToBottomIntProvider.create(2, 3), ConstantIntProvider.create(0), 1),
 			new TwoLayersFeatureSize(10, 0, 3)
 		);
 	}

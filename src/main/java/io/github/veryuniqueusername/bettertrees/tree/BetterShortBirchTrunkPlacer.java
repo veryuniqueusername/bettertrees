@@ -31,7 +31,7 @@ public class BetterShortBirchTrunkPlacer extends TrunkPlacer {
 		fillTrunkPlacerFields(instance).apply(instance, BetterShortBirchTrunkPlacer::new));
 
 	public BetterShortBirchTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
-		this(baseHeight, firstRandomHeight, secondRandomHeight, 0.75D, 2D, 0, 0, 0D, 1D, 0D, 1D);
+		this(baseHeight, firstRandomHeight, secondRandomHeight, 0.7D, 2D, 2, 7, 0D, 0.5D, 1D, 1D);
 	}
 
 	public BetterShortBirchTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight, double branchProbabilityModifier, double subBranchProbabilityDivisor, int branchLengthModifier, int initialBranchLengthModifier, double minLeftBias, double maxLeftBias, double minUpBias, double maxUpBias) {
