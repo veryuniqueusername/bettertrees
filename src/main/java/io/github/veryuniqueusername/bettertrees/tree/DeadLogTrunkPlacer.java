@@ -25,7 +25,7 @@ public class DeadLogTrunkPlacer extends BetterOakTrunkPlacer {
 
     @Override
     protected TrunkPlacerType<?> getType() {
-        return BetterTreesConfiguredFeatures.DEAD_OAK_TRUNK_PLACER;
+        return BetterTreesConfiguredFeatures.DEAD_LOG_TRUNK_PLACER;
     }
 
     public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
