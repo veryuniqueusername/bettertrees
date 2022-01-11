@@ -17,11 +17,12 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
 
+import static io.github.veryuniqueusername.bettertrees.BetterTrees.LOGGER;
+
 public class BetterJungleTrunkPlacer extends TrunkPlacer {
 	private final double branchProbabilityModifier;
 
-	public static final Codec<BetterJungleTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
-		fillTrunkPlacerFields(instance).apply(instance, BetterJungleTrunkPlacer::new));
+	public static final Codec<BetterJungleTrunkPlacer> CODEC = RecordCodecBuilder.create(instance -> fillTrunkPlacerFields(instance).apply(instance, BetterJungleTrunkPlacer::new));
 
 	public BetterJungleTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
 		this(baseHeight, firstRandomHeight, secondRandomHeight, 0.2D);
@@ -93,7 +94,7 @@ public class BetterJungleTrunkPlacer extends TrunkPlacer {
 
 			// Don't spawn branches below 5 blocks along the branch if the branch is level 0 (i.e. the trunk)
 			if (level == 0) {
-				this.clampBelow = 5;
+				this.clampBelow = 10;
 			} else {
 				this.clampBelow = 0;
 			}
@@ -108,16 +109,21 @@ public class BetterJungleTrunkPlacer extends TrunkPlacer {
 				// set the block
 				getAndSetState(world, replacer, random, bendPos(startPos, i), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 				// add foliage nodes
-				if (nodesAllAlong && (random.nextDouble() < 0.75 || i == length - 1))
+				if (length < 6 && i == (length - 1)) {
+					LOGGER.info("branch, length" + length + "i" + i + "level" + level);
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 0, false));
-				else if (i == (length - 1) && level == 0) // generate more leaves at the top of the trunk
-					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, true));
+				}
+				// generate more leaves at the top of the trunk
+				else if (length >= 6 && i == (length - 1)) {
+					LOGGER.info("trunk, length" + length + "i" + i + "level" + level);
+					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), random.nextInt(1, 3), false));
+				}
 				updateBend();
 				// generates a branch
-				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel)) {
-					int newLength = random.nextInt(2) + 1;
-					Direction newDirection = Direction.byId(random.nextInt(5) + 1);
-					Branch branch = new Branch(world, replacer, random, bendPos(startPos, i), rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(0d, 1d), getDoubleInRange(0d, 1d), (0.6 * random.nextDouble()) + 0, true);
+				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel) && i < length - 5) {
+					int newLength = random.nextInt(3) + 2;
+					Direction newDirection = Direction.byId(random.nextInt(4) + 2);
+					Branch branch = new Branch(world, replacer, random, bendPos(startPos, i), rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(0d, 1d), getDoubleInRange(0d, 1d), (0.6 * random.nextDouble()) + 0, false);
 					list.addAll(branch.generate());
 				}
 			}
@@ -136,20 +142,16 @@ public class BetterJungleTrunkPlacer extends TrunkPlacer {
 		}
 
 		private BlockPos bendPos(BlockPos startPos, int i, Direction direction) {
-			return startPos.offset(direction, i).offset(
-				switch (direction) {
-					case NORTH, DOWN -> Direction.WEST;
-					case EAST -> Direction.NORTH;
-					case SOUTH, UP -> Direction.EAST;
-					case WEST -> Direction.SOUTH;
-				}, bendLeft
-			).offset(
-				switch (direction) {
-					case NORTH, SOUTH, EAST, WEST -> Direction.UP;
-					case UP -> Direction.SOUTH;
-					case DOWN -> Direction.NORTH;
-				}, bendUp
-			);
+			return startPos.offset(direction, i).offset(switch (direction) {
+				case NORTH, DOWN -> Direction.WEST;
+				case EAST -> Direction.NORTH;
+				case SOUTH, UP -> Direction.EAST;
+				case WEST -> Direction.SOUTH;
+			}, bendLeft).offset(switch (direction) {
+				case NORTH, SOUTH, EAST, WEST -> Direction.UP;
+				case UP -> Direction.SOUTH;
+				case DOWN -> Direction.NORTH;
+			}, bendUp);
 		}
 
 		private BlockPos bendPos(BlockPos startPos, int i) {
@@ -161,7 +163,7 @@ public class BetterJungleTrunkPlacer extends TrunkPlacer {
 			if (height < clampBelow) return 0D;
 			if (this.level == 0) {
 				double normalizedHeight = (double) height / maxHeight;
-				return gaussian(normalizedHeight, modifier, 0.75D, 0.2D);
+				return gaussian(normalizedHeight, modifier, 0.75D, 0.4D);
 			} else return modifier / 2d;
 		}
 

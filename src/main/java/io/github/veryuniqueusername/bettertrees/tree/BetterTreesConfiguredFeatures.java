@@ -13,11 +13,9 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.feature.*;
 import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
-import net.minecraft.world.gen.foliage.BlobFoliagePlacer;
-import net.minecraft.world.gen.foliage.BushFoliagePlacer;
-import net.minecraft.world.gen.foliage.LargeOakFoliagePlacer;
-import net.minecraft.world.gen.foliage.RandomSpreadFoliagePlacer;
+import net.minecraft.world.gen.foliage.*;
 import net.minecraft.world.gen.treedecorator.BeehiveTreeDecorator;
+import net.minecraft.world.gen.treedecorator.CocoaBeansTreeDecorator;
 import net.minecraft.world.gen.treedecorator.LeavesVineTreeDecorator;
 import net.minecraft.world.gen.treedecorator.TrunkVineTreeDecorator;
 import net.minecraft.world.gen.trunk.StraightTrunkPlacer;
@@ -70,6 +68,7 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_BIRCH_MORE_BEES = Feature.TREE.configure(birchBuilder(false, false).decorators(ImmutableList.of(BEES_COMMON)).build());
 
 	public static final ConfiguredFeature<TreeFeatureConfig,?> TREE_BETTER_JUNGLE_NO_VINE = Feature.TREE.configure(jungleBuilder(false).build());
+	public static final ConfiguredFeature<TreeFeatureConfig,?> TREE_BETTER_JUNGLE = Feature.TREE.configure(jungleBuilder(false).decorators(ImmutableList.of(new CocoaBeansTreeDecorator(0.2f), TrunkVineTreeDecorator.INSTANCE, LeavesVineTreeDecorator.INSTANCE)).build());
 
 	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_FOREST_TREES = Feature.RANDOM_SELECTOR.configure(
 		new RandomFeatureConfig(
@@ -136,7 +135,7 @@ public class BetterTreesConfiguredFeatures {
 				new RandomFeatureEntry(TreePlacedFeatures.JUNGLE_BUSH, 0.5f),
 				new RandomFeatureEntry(TreePlacedFeatures.MEGA_JUNGLE_TREE_CHECKED, 1f / 3f)
 			),
-			TreePlacedFeatures.JUNGLE_TREE
+			BetterTreesPlacedFeatures.TREE_BETTER_JUNGLE
 		)
 	);
 
@@ -144,9 +143,9 @@ public class BetterTreesConfiguredFeatures {
 		new RandomFeatureConfig(
 			List.of(
 				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_OAK, 0.1f),
-				new RandomFeatureEntry(TreePlacedFeatures.JUNGLE_BUSH, 0.5f)
+				new RandomFeatureEntry(TreePlacedFeatures.JUNGLE_BUSH, 0.6f)
 			),
-			TreePlacedFeatures.JUNGLE_TREE
+			BetterTreesPlacedFeatures.TREE_BETTER_JUNGLE
 		)
 	);
 
@@ -243,8 +242,8 @@ public class BetterTreesConfiguredFeatures {
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.JUNGLE_WOOD.getDefaultState()),
 			new BetterJungleTrunkPlacer(8, 20, 15, 0.2D),
 			SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.JUNGLE_LEAVES).getDefaultState()),
-			new LargeOakFoliagePlacer(BiasedToBottomIntProvider.create(2, 3), ConstantIntProvider.create(0), 1),
-			new TwoLayersFeatureSize(10, 0, 3)
+			new JungleFoliagePlacer(BiasedToBottomIntProvider.create(0, 0), ConstantIntProvider.create(0), 1),
+			new TwoLayersFeatureSize(30, 0, 3)
 		);
 	}
 

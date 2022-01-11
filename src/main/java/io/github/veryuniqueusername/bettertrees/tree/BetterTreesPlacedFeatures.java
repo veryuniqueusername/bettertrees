@@ -161,6 +161,22 @@ public class BetterTreesPlacedFeatures {
 		)
 	));
 
+	public static final PlacedFeature TREE_BETTER_JUNGLE_NO_VINE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_JUNGLE_NO_VINE, ImmutableList.of(
+		BlockFilterPlacementModifier.of(
+			BlockPredicate.wouldSurvive(
+				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
+			)
+		)
+	));
+
+	public static final PlacedFeature TREE_BETTER_JUNGLE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_JUNGLE, ImmutableList.of(
+		BlockFilterPlacementModifier.of(
+			BlockPredicate.wouldSurvive(
+				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
+			)
+		)
+	));
+
 	public static final PlacedFeature BETTER_FOREST_TREES = BetterTreesConfiguredFeatures.BETTER_FOREST_TREES.withPlacement(
 		VegetationPlacedFeatures.modifiers(
 			PlacedFeatures.createCountExtraModifier(8, 0.1f, 1)
@@ -298,6 +314,8 @@ public class BetterTreesPlacedFeatures {
 		registerPlacedFeature("tall_better_birch_rare_bees", TREE_TALL_BETTER_BIRCH_RARE_BEES);
 		registerPlacedFeature("better_birch_regular_bees", TREE_BETTER_BIRCH_REGULAR_BEES);
 		registerPlacedFeature("better_birch_more_bees", TREE_BETTER_BIRCH_MORE_BEES);
+		registerPlacedFeature("better_jungle_no_vine", TREE_BETTER_JUNGLE_NO_VINE);
+		registerPlacedFeature("better_jungle", TREE_BETTER_JUNGLE);
 		registerPlacedFeature("better_forest_trees", BETTER_FOREST_TREES);
 		registerPlacedFeature("better_flower_forest_trees", BETTER_FLOWER_FOREST_TREES);
 		registerPlacedFeature("better_birch_forest_trees", BETTER_BIRCH_FOREST_TREES);
