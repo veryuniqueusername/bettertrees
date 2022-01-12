@@ -30,7 +30,7 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 	public static final Codec<BetterTallBirchTrunkPlacer> CODEC = RecordCodecBuilder.create(instance -> fillTrunkPlacerFields(instance).apply(instance, BetterTallBirchTrunkPlacer::new));
 
 	public BetterTallBirchTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
-		this(baseHeight, firstRandomHeight, secondRandomHeight, 0.75D, 2D, 0, 0, 0D, 1D, 0D, 1D);
+		this(baseHeight, firstRandomHeight, secondRandomHeight, 0.5D, 2D, 0, 0, 0D, 1D, 0D, 1D);
 	}
 
 	public BetterTallBirchTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight, double branchProbabilityModifier, double subBranchProbabilityDivisor, int branchLengthModifier, int initialBranchLengthModifier, double minLeftBias, double maxLeftBias, double minUpBias, double maxUpBias) {
@@ -57,7 +57,7 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 3, 0d, 0d, 0.05d, false);
 		// generate roots
 		for (int i = 2; i < 6; ++i) {
-			if (random.nextDouble() < 0.5D) {
+			if (random.nextDouble() < 0.4D) {
 				int finalI = i;
 				getAndSetState(world, replacer, random, startPos.offset(Direction.byId(i)), config, blockState -> blockState.with(PillarBlock.AXIS, Direction.byId(finalI).getAxis()));
 			}
@@ -129,7 +129,7 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 				updateBend();
 				//                 generates a sub-branch
 				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel)) {
-					int newLength = length - (random.nextInt(5) + 1);
+					int newLength = length - (random.nextInt(2) + 1);
 					if (level == 0) newLength = newLength - initialBranchLengthModifier;
 					else newLength = newLength - branchLengthModifier;
 					Direction newDirection = Direction.UP;

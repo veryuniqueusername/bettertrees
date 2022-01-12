@@ -13,10 +13,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.feature.*;
 import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
-import net.minecraft.world.gen.foliage.BlobFoliagePlacer;
-import net.minecraft.world.gen.foliage.BushFoliagePlacer;
-import net.minecraft.world.gen.foliage.JungleFoliagePlacer;
-import net.minecraft.world.gen.foliage.RandomSpreadFoliagePlacer;
+import net.minecraft.world.gen.foliage.*;
 import net.minecraft.world.gen.treedecorator.BeehiveTreeDecorator;
 import net.minecraft.world.gen.treedecorator.CocoaBeansTreeDecorator;
 import net.minecraft.world.gen.treedecorator.LeavesVineTreeDecorator;
@@ -93,7 +90,7 @@ public class BetterTreesConfiguredFeatures {
 		new RandomFeatureConfig(
 			List.of(
 				new RandomFeatureEntry(BetterTreesPlacedFeatures.DEAD_BIRCH_LOG, 0.22f),
-				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_DEAD_BIRCH, 0.01f),
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_DEAD_BIRCH, 0.005f),
 				new RandomFeatureEntry(BetterTreesPlacedFeatures.UNDERGROWTH_BUSH, 0.5f)
 			),
 			BetterTreesPlacedFeatures.TREE_BETTER_BIRCH_RARE_BEES
@@ -192,6 +189,7 @@ public class BetterTreesConfiguredFeatures {
 	public static void registerAll() {
 		registerConfiguredFeature("dead_oak_log", DEAD_OAK_LOG);
 		registerConfiguredFeature("dead_birch_log", DEAD_BIRCH_LOG);
+		registerConfiguredFeature("dead_jungle_log", DEAD_JUNGLE_LOG);
 		registerConfiguredFeature("oak_stump", OAK_STUMP);
 		registerConfiguredFeature("birch_stump", BIRCH_STUMP);
 		registerConfiguredFeature("undergrowth_bush", UNDERGROWTH_BUSH);
@@ -208,6 +206,8 @@ public class BetterTreesConfiguredFeatures {
 		registerConfiguredFeature("better_tall_birch_rare_bees", TREE_TALL_BETTER_BIRCH_RARE_BEES);
 		registerConfiguredFeature("better_birch_regular_bees", TREE_BETTER_BIRCH_REGULAR_BEES);
 		registerConfiguredFeature("better_birch_more_bees", TREE_BETTER_BIRCH_MORE_BEES);
+		registerConfiguredFeature("better_jungle", TREE_BETTER_JUNGLE);
+		registerConfiguredFeature("better_jungle_no_vine", TREE_BETTER_JUNGLE_NO_VINE);
 		registerConfiguredFeature("better_forest_trees", BETTER_FOREST_TREES);
 		registerConfiguredFeature("better_birch_forest_trees", BETTER_BIRCH_FOREST_TREES);
 		registerConfiguredFeature("better_tall_birch_forest_trees", BETTER_TALL_BIRCH_FOREST_TREES);
@@ -241,7 +241,7 @@ public class BetterTreesConfiguredFeatures {
 		}
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.BIRCH_WOOD.getDefaultState()),
-			new BetterShortBirchTrunkPlacer(3, 8, 1, 2D, 2D, 2, 7, 0D, 1D, 1D, 1D),
+			new BetterShortBirchTrunkPlacer(4, 7, 3, 2D, 2D, 2, 2, 0D, 1D, 1D, 1D),
 			SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.BIRCH_LEAVES).getDefaultState()),
 			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(1, 3), ConstantIntProvider.create(0), BiasedToBottomIntProvider.create(2, 4), 40),
 			new TwoLayersFeatureSize(6, 0, 2)
