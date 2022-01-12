@@ -13,7 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 public class BetterTrees implements ModInitializer {
 	public static final String MOD_ID = "bettertrees";
-  public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+  public static final Logger MOD_LOGGER = LogManager.getLogger(MOD_ID);
 
 
 	@Override

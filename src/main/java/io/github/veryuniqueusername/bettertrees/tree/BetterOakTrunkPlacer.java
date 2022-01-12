@@ -31,7 +31,7 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 		fillTrunkPlacerFields(instance).apply(instance, BetterOakTrunkPlacer::new));
 
 	public BetterOakTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
-		this(baseHeight, firstRandomHeight, secondRandomHeight, 1.50D, 5D, 3, 5, 0D, 0.4D, 0.9D, 1D);
+		this(baseHeight, firstRandomHeight, secondRandomHeight, 2.50D, 3D, 2, 4, 0D, 1D, 0.6D, 1D);
 	}
 
 	public BetterOakTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight, double branchProbabilityModifier, double subBranchProbabilityDivisor, int branchLengthModifier, int initialBranchLengthModifier, double minLeftBias, double maxLeftBias, double minUpBias, double maxUpBias) {
@@ -55,7 +55,7 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 	public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
 		setToDirt(world, replacer, random, startPos.down(), config);
 		// The trunk is a branch
-		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 2, 0d, 0d, 0.25d, false);
+		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 4, 0d, 0d, 0.25d, false);
 		// generate roots
 		for (int i = 2; i < 6; ++i) {
 			if (random.nextDouble() < 0.5D) {
@@ -97,6 +97,7 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 			this.config = config;
 			this.length = length;
 			this.direction = direction;
+			this.level = level;
 			this.maxLevel = maxLevel;
 			this.leftBias = leftBias;
 			if (this.direction.getAxis() == Direction.Axis.Y)

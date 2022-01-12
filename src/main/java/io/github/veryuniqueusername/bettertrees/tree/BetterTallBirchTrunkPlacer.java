@@ -27,8 +27,7 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 	private double minUpBias;
 	private double maxUpBias;
 
-	public static final Codec<BetterTallBirchTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
-		fillTrunkPlacerFields(instance).apply(instance, BetterTallBirchTrunkPlacer::new));
+	public static final Codec<BetterTallBirchTrunkPlacer> CODEC = RecordCodecBuilder.create(instance -> fillTrunkPlacerFields(instance).apply(instance, BetterTallBirchTrunkPlacer::new));
 
 	public BetterTallBirchTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
 		this(baseHeight, firstRandomHeight, secondRandomHeight, 0.75D, 2D, 0, 0, 0D, 1D, 0D, 1D);
@@ -55,7 +54,7 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 	public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
 		setToDirt(world, replacer, random, startPos.down(), config);
 		// The trunk is a branch
-		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 1, 0d, 0d, 0.05d, false);
+		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 3, 0d, 0d, 0.05d, false);
 		// generate roots
 		for (int i = 2; i < 6; ++i) {
 			if (random.nextDouble() < 0.5D) {
@@ -97,6 +96,7 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 			this.config = config;
 			this.length = length;
 			this.direction = direction;
+			this.level = level;
 			this.maxLevel = maxLevel;
 			this.leftBias = leftBias;
 			if (this.direction.getAxis() == Direction.Axis.Y)
@@ -124,12 +124,12 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 				// add foliage nodes
 				if (i > (length - 3) && level == 0) // generate more leaves at the top of the branch
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
-				else if (i > (length - 8))
+				else if (i > (length - 8) && level != 0)
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
 				updateBend();
 				//                 generates a sub-branch
 				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel)) {
-					int newLength = length - (random.nextInt(4) + 1);
+					int newLength = length - (random.nextInt(5) + 1);
 					if (level == 0) newLength = newLength - initialBranchLengthModifier;
 					else newLength = newLength - branchLengthModifier;
 					Direction newDirection = Direction.UP;
@@ -156,20 +156,16 @@ public class BetterTallBirchTrunkPlacer extends TrunkPlacer {
 		}
 
 		private BlockPos bendPos(BlockPos startPos, int i, Direction direction) {
-			return startPos.offset(direction, i).offset(
-				switch (direction) {
-					case NORTH, DOWN -> Direction.WEST;
-					case EAST -> Direction.NORTH;
-					case SOUTH, UP -> Direction.EAST;
-					case WEST -> Direction.SOUTH;
-				}, bendLeft
-			).offset(
-				switch (direction) {
-					case NORTH, SOUTH, EAST, WEST -> Direction.UP;
-					case UP -> Direction.SOUTH;
-					case DOWN -> Direction.NORTH;
-				}, bendUp
-			);
+			return startPos.offset(direction, i).offset(switch (direction) {
+				case NORTH, DOWN -> Direction.WEST;
+				case EAST -> Direction.NORTH;
+				case SOUTH, UP -> Direction.EAST;
+				case WEST -> Direction.SOUTH;
+			}, bendLeft).offset(switch (direction) {
+				case NORTH, SOUTH, EAST, WEST -> Direction.UP;
+				case UP -> Direction.SOUTH;
+				case DOWN -> Direction.NORTH;
+			}, bendUp);
 		}
 
 		private BlockPos bendPos(BlockPos startPos, int i) {

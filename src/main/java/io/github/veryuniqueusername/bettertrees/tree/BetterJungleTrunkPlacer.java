@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
 
-import static io.github.veryuniqueusername.bettertrees.BetterTrees.LOGGER;
-
 public class BetterJungleTrunkPlacer extends TrunkPlacer {
 	private final double branchProbabilityModifier;
 
@@ -84,6 +82,7 @@ public class BetterJungleTrunkPlacer extends TrunkPlacer {
 			this.config = config;
 			this.length = length;
 			this.direction = direction;
+			this.level = level;
 			this.maxLevel = maxLevel;
 			this.leftBias = leftBias;
 			if (this.direction.getAxis() == Direction.Axis.Y)
@@ -110,12 +109,10 @@ public class BetterJungleTrunkPlacer extends TrunkPlacer {
 				getAndSetState(world, replacer, random, bendPos(startPos, i), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 				// add foliage nodes
 				if (length < 6 && i == (length - 1)) {
-					LOGGER.info("branch, length" + length + "i" + i + "level" + level);
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 0, false));
 				}
 				// generate more leaves at the top of the trunk
 				else if (length >= 6 && i == (length - 1)) {
-					LOGGER.info("trunk, length" + length + "i" + i + "level" + level);
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), random.nextInt(1, 3), false));
 				}
 				updateBend();

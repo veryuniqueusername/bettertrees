@@ -34,6 +34,14 @@ public class BetterTreesPlacedFeatures {
 		)
 	));
 
+	public static final PlacedFeature DEAD_JUNGLE_LOG = new PlacedFeature(() -> BetterTreesConfiguredFeatures.DEAD_JUNGLE_LOG, ImmutableList.of(
+		BlockFilterPlacementModifier.of(
+			BlockPredicate.wouldSurvive(
+				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
+			)
+		)
+	));
+
 	public static final PlacedFeature OAK_STUMP = new PlacedFeature(() -> BetterTreesConfiguredFeatures.OAK_STUMP, ImmutableList.of(
 		BlockFilterPlacementModifier.of(
 			BlockPredicate.wouldSurvive(
@@ -170,6 +178,14 @@ public class BetterTreesPlacedFeatures {
 	));
 
 	public static final PlacedFeature TREE_BETTER_JUNGLE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_JUNGLE, ImmutableList.of(
+		BlockFilterPlacementModifier.of(
+			BlockPredicate.wouldSurvive(
+				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
+			)
+		)
+	));
+
+	public static final PlacedFeature TREE_DEAD_JUNGLE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_DEAD_JUNGLE, ImmutableList.of(
 		BlockFilterPlacementModifier.of(
 			BlockPredicate.wouldSurvive(
 				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
