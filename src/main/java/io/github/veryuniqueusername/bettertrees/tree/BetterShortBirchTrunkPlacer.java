@@ -124,8 +124,8 @@ public class BetterShortBirchTrunkPlacer extends TrunkPlacer {
 				// set the block
 				getAndSetState(world, replacer, random, bendPos(startPos, i), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 				// add foliage nodes
-				if ((i > (length - 3) || i > 5) && level == 0) // generate more leaves at the top of the branch
-					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(3), 2, false));
+				if ((i > (length - 3) || i > 3) && level == 0) // generate more leaves at the top of the branch
+					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
 				else if (i > (length - 8) && level != 0)
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
 				updateBend();
