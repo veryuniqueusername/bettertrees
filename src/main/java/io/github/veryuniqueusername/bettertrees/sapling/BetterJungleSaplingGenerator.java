@@ -20,6 +20,6 @@ public class BetterJungleSaplingGenerator extends LargeTreeSaplingGenerator {
     @Nullable
     @Override
     protected ConfiguredFeature<?, ?> getLargeTreeFeature(Random random) {
-        return TreeConfiguredFeatures.MEGA_JUNGLE_TREE;
+        return BetterTreesConfiguredFeatures.TREE_BETTER_MEGA_JUNGLE_NO_VINE;
     }
 }

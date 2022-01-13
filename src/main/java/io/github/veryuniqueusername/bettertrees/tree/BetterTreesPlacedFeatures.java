@@ -169,14 +169,6 @@ public class BetterTreesPlacedFeatures {
 		)
 	));
 
-	public static final PlacedFeature TREE_BETTER_JUNGLE_NO_VINE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_JUNGLE_NO_VINE, ImmutableList.of(
-		BlockFilterPlacementModifier.of(
-			BlockPredicate.wouldSurvive(
-				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
-			)
-		)
-	));
-
 	public static final PlacedFeature TREE_BETTER_JUNGLE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_JUNGLE, ImmutableList.of(
 		BlockFilterPlacementModifier.of(
 			BlockPredicate.wouldSurvive(
@@ -185,7 +177,31 @@ public class BetterTreesPlacedFeatures {
 		)
 	));
 
+	public static final PlacedFeature TREE_BETTER_JUNGLE_NO_VINE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_JUNGLE_NO_VINE, ImmutableList.of(
+		BlockFilterPlacementModifier.of(
+			BlockPredicate.wouldSurvive(
+				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
+			)
+		)
+	));
+
 	public static final PlacedFeature TREE_DEAD_JUNGLE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_DEAD_JUNGLE, ImmutableList.of(
+		BlockFilterPlacementModifier.of(
+			BlockPredicate.wouldSurvive(
+				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
+			)
+		)
+	));
+
+	public static final PlacedFeature TREE_BETTER_MEGA_JUNGLE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_MEGA_JUNGLE, ImmutableList.of(
+		BlockFilterPlacementModifier.of(
+			BlockPredicate.wouldSurvive(
+				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
+			)
+		)
+	));
+
+	public static final PlacedFeature TREE_BETTER_MEGA_JUNGLE_NO_VINE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_MEGA_JUNGLE_NO_VINE, ImmutableList.of(
 		BlockFilterPlacementModifier.of(
 			BlockPredicate.wouldSurvive(
 				Blocks.JUNGLE_SAPLING.getDefaultState(), BlockPos.ORIGIN
@@ -314,15 +330,18 @@ public class BetterTreesPlacedFeatures {
 	public static void registerAll() {
 		registerPlacedFeature("dead_oak_log", DEAD_OAK_LOG);
 		registerPlacedFeature("dead_birch_log", DEAD_BIRCH_LOG);
+
 		registerPlacedFeature("oak_stump", OAK_STUMP);
 		registerPlacedFeature("birch_stump", BIRCH_STUMP);
 		registerPlacedFeature("undergrowth_bush", UNDERGROWTH_BUSH);
+
 		registerPlacedFeature("better_oak", TREE_BETTER_OAK);
 		registerPlacedFeature("dead_oak", TREE_DEAD_OAK);
 		registerPlacedFeature("better_oak_rare_bees", TREE_BETTER_OAK_RARE_BEES);
 		registerPlacedFeature("better_oak_regular_bees", TREE_BETTER_OAK_REGULAR_BEES);
 		registerPlacedFeature("better_oak_more_bees", TREE_BETTER_OAK_MORE_BEES);
 		registerPlacedFeature("better_swamp_oak", TREE_BETTER_SWAMP_OAK);
+
 		registerPlacedFeature("better_birch", TREE_BETTER_BIRCH);
 		registerPlacedFeature("dead_birch", TREE_DEAD_BIRCH);
 		registerPlacedFeature("tall_dead_birch", TREE_TALL_DEAD_BIRCH);
@@ -330,8 +349,13 @@ public class BetterTreesPlacedFeatures {
 		registerPlacedFeature("tall_better_birch_rare_bees", TREE_TALL_BETTER_BIRCH_RARE_BEES);
 		registerPlacedFeature("better_birch_regular_bees", TREE_BETTER_BIRCH_REGULAR_BEES);
 		registerPlacedFeature("better_birch_more_bees", TREE_BETTER_BIRCH_MORE_BEES);
-		registerPlacedFeature("better_jungle_no_vine", TREE_BETTER_JUNGLE_NO_VINE);
+
 		registerPlacedFeature("better_jungle", TREE_BETTER_JUNGLE);
+		registerPlacedFeature("better_jungle_no_vine", TREE_BETTER_JUNGLE_NO_VINE);
+		registerPlacedFeature("dead_jungle", TREE_DEAD_JUNGLE);
+		registerPlacedFeature("better_mega_jungle", TREE_BETTER_MEGA_JUNGLE);
+		registerPlacedFeature("better_mega_jungle_no_vine", TREE_BETTER_MEGA_JUNGLE_NO_VINE);
+
 		registerPlacedFeature("better_forest_trees", BETTER_FOREST_TREES);
 		registerPlacedFeature("better_flower_forest_trees", BETTER_FLOWER_FOREST_TREES);
 		registerPlacedFeature("better_birch_forest_trees", BETTER_BIRCH_FOREST_TREES);
