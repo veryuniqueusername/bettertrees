@@ -10,7 +10,6 @@ import net.minecraft.world.TestableWorld;
 import net.minecraft.world.gen.feature.TreeFeatureConfig;
 import net.minecraft.world.gen.foliage.FoliagePlacer;
 import net.minecraft.world.gen.trunk.GiantTrunkPlacer;
-import net.minecraft.world.gen.trunk.TrunkPlacer;
 import net.minecraft.world.gen.trunk.TrunkPlacerType;
 
 import java.util.ArrayList;
@@ -101,37 +100,50 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		public List<FoliagePlacer.TreeNode> generate() {
 			List<FoliagePlacer.TreeNode> list = new ArrayList<>();
 			for (int i = 0; i < length; ++i) {
-				// makes branches look more joined up
-				if (i > 0)
-					getAndSetState(world, replacer, random, bendPos(startPos, i - 1), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-				// set the block
-				getAndSetState(world, replacer, random, bendPos(startPos, i), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-				// add foliage nodes
+				BlockPos bendedPos = bendPos(startPos, i);
+				BlockPos.Mutable mutable = new BlockPos.Mutable(bendedPos.getX(), bendedPos.getY(), bendedPos.getZ());
+				if (level == 0) {
+//					setTrunk(world, replacer, random, mutable, config, startPos, i);
+					setLog(world, replacer, random, mutable, config, startPos, 0, i, 0);
+					setLog(world, replacer, random, mutable, config, startPos, 1, i, 0);
+					setLog(world, replacer, random, mutable, config, startPos, 1, i, 1);
+					setLog(world, replacer, random, mutable, config, startPos, 0, i, 1);
+				}
+				else { // makes branches look more joined up
+					if (i > 0)
+						getAndSetState(world, replacer, random, bendPos(startPos, i - 1), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+					// set the block
+					getAndSetState(world, replacer, random, bendedPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+				} // add foliage nodes
 				if (length < 6 && i == (length - 1)) {
-					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 0, false));
+					list.add(new FoliagePlacer.TreeNode(bendedPos.up(), 0, false));
 				}
 				// generate more leaves at the top of the trunk
 				else if (length >= 6 && i == (length - 1)) {
-					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), random.nextInt(1, 3), false));
+					list.add(new FoliagePlacer.TreeNode(bendedPos.up(), random.nextInt(1, 3), false));
 				}
 				updateBend();
 				// generates a branch
 				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel) && i < length - 5) {
 					int newLength = random.nextInt(3) + 2;
 					Direction newDirection = Direction.byId(random.nextInt(4) + 2);
-					Branch branch = new Branch(world, replacer, random, bendPos(startPos, i), rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(0d, 1d), getDoubleInRange(0d, 1d), (0.6 * random.nextDouble()) + 0, false);
+					Branch branch = new Branch(world, replacer, random, bendedPos, rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(0d, 1d), getDoubleInRange(0d, 1d), (0.6 * random.nextDouble()) + 0, false);
 					list.addAll(branch.generate());
 				}
 			}
 			return list;
 		}
 
-		private static void setTrunk(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos.Mutable pos, TreeFeatureConfig config, BlockPos startPos, int x, int y, int z) {
-			pos.set(startPos, 0, y, 0);
-			pos.set(startPos, 1, y, 0);
-			pos.set(startPos, 1, y, 1);
-			pos.set(startPos, 0, y, 1);
-			BetterMegaJungleTrunkPlacer.trySetState(world, replacer, random, pos, config);
+		private void setTrunk(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos.Mutable pos, TreeFeatureConfig config, BlockPos startPos, int y) {
+			setLog(world, replacer, random, pos, config, startPos, 0, y, 0);
+			setLog(world, replacer, random, pos, config, startPos, 1, y, 0);
+			setLog(world, replacer, random, pos, config, startPos, 1, y, 1);
+			setLog(world, replacer, random, pos, config, startPos, 0, y, 1);
+		}
+
+		private static void setLog(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos.Mutable pos, TreeFeatureConfig config, BlockPos startPos, int x, int y, int z) {
+			pos.set(pos, x, 0, z);
+			GiantTrunkPlacer.trySetState(world, replacer, random, pos, config);
 		}
 
 		private void updateBend() {

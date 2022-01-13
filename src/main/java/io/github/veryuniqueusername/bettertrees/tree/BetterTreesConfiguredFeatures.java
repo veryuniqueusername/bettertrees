@@ -269,7 +269,7 @@ public class BetterTreesConfiguredFeatures {
 	private static TreeFeatureConfig.Builder megaJungleBuilder() {
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.JUNGLE_WOOD.getDefaultState()),
-			new BetterMegaJungleTrunkPlacer(16, 40, 35),
+			new BetterMegaJungleTrunkPlacer(16, 24, 24),
 			SimpleBlockStateProviderInvoker.invokeCtor((Blocks.JUNGLE_LEAVES).getDefaultState()),
 			new JungleFoliagePlacer(BiasedToBottomIntProvider.create(0, 0), ConstantIntProvider.create(0), 1),
 			new TwoLayersFeatureSize(40, 1, 6)
