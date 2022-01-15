@@ -38,7 +38,8 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		setToDirt(world, replacer, random, startPos.down().south(), config);
 		setToDirt(world, replacer, random, startPos.down().south().east(), config);
 		// The trunk is a branch
-		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 1, 0d, 0d, 0.05d, false);
+		Direction trunkBendDirection = Direction.byId(random.nextInt(2, 6));
+		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, trunkBendDirection, height, 0, 1, 0d, 0d, 0.1d);
 		// generate roots
 		for (int i = 2; i < 6; ++i) {
 			if (random.nextDouble() < 0.5D) {
@@ -58,28 +59,30 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		BlockPos rootPos;
 		TreeFeatureConfig config;
 		Direction direction;
+		Direction bendDirection;
 
-		int clampBelow;
 		int level;
 		int length;
 		int maxLevel;
 		double leftBias;
 		double upBias;
 		double bendiness;
-		boolean nodesAllAlong;
+
+		int clampBelow;
 
 		int bendLeft = 0;
 		int bendUp = 0;
 
-		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos startPos, BlockPos rootPos, TreeFeatureConfig config, Direction direction, int length, int level, int maxLevel, double leftBias, double upBias, double bendiness, boolean nodesAllAlong) {
+		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos startPos, BlockPos rootPos, TreeFeatureConfig config, Direction direction, Direction bendDirection, int length, int level, int maxLevel, double leftBias, double upBias, double bendiness) {
 			this.world = world;
 			this.replacer = replacer;
 			this.random = random;
 			this.startPos = startPos;
 			this.rootPos = rootPos;
 			this.config = config;
-			this.length = length;
 			this.direction = direction;
+			this.length = length;
+			this.bendDirection = bendDirection;
 			this.level = level;
 			this.maxLevel = maxLevel;
 			this.leftBias = leftBias;
@@ -87,7 +90,6 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 				this.upBias = this.leftBias; // If the branch is generating up or down, all directions use the leftBias
 			else this.upBias = upBias;
 			this.bendiness = bendiness;
-			this.nodesAllAlong = nodesAllAlong;
 
 			// Don't spawn branches below 5 blocks along the branch if the branch is level 0 (i.e. the trunk)
 			if (level == 0) {
@@ -100,13 +102,13 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		public List<FoliagePlacer.TreeNode> generate() {
 			List<FoliagePlacer.TreeNode> list = new ArrayList<>();
 			for (int i = 0; i < length; ++i) {
-				BlockPos bendedPos = bendPos(startPos, i);
+//				bendDirection = Direction.byId(random.nextInt(2, 6));
+				BlockPos bendedPos = bendPos(startPos, i, bendDirection);
 				if (level == 0) {
-					setTrunk(world, replacer, random, config, startPos, i);
-				}
-				else { // makes branches look more joined up
+					setTrunk(world, replacer, random, config, startPos, i, bendDirection);
+				} else { // makes branches look more joined up
 					if (i > 0)
-						getAndSetState(world, replacer, random, bendPos(startPos, i - 1), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+						getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 					// set the block
 					getAndSetState(world, replacer, random, bendedPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 				} // add foliage nodes
@@ -122,22 +124,34 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 				if (((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel) && i < length - 5) || (level == 0 && i == length - 1)) {
 					int newLength = random.nextInt(3) + 2;
 					Direction newDirection = Direction.byId(random.nextInt(4) + 2);
-					Branch branch = new Branch(world, replacer, random, bendedPos, rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(0d, 1d), getDoubleInRange(0d, 1d), (0.6 * random.nextDouble()) + 0, false);
+					Direction newBendDirection = Direction.byId(random.nextInt(2, 6));
+					BlockPos branchPos = bendedPos;
+					switch (newDirection.getId()) {
+						case 2: // NORTH
+							if (random.nextDouble() < 0.5) branchPos = bendedPos.east();
+						case 3: // SOUTH
+							break;
+						case 4: // WEST
+							break;
+						case 5: // EAST
+							break;
+					}
+					Branch branch = new Branch(world, replacer, random, branchPos, rootPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, getDoubleInRange(0d, 1d), getDoubleInRange(0d, 1d), (0.6 * random.nextDouble()) + 0);
 					list.addAll(branch.generate());
 				}
 			}
 			return list;
 		}
 
-		private void setTrunk(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, BlockPos startPos, int i) {
-			getAndSetState(world, replacer, random, bendPos(startPos, i), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i).east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i).south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i).east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i - 1), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i - 1).east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i - 1).south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i - 1).east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+		private void setTrunk(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, BlockPos startPos, int i, Direction bendDirection) {
+			getAndSetState(world, replacer, random, bendPos(startPos, i, bendDirection), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i, bendDirection).east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i, bendDirection).south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i, bendDirection).east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection).east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection).south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection).east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 		}
 
 		private void updateBend() {
@@ -151,13 +165,8 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 			}
 		}
 
-		private BlockPos bendPos(BlockPos startPos, int i, Direction direction) {
-			return startPos.offset(direction, i).offset(switch (direction) {
-				case NORTH, DOWN -> Direction.WEST;
-				case EAST -> Direction.NORTH;
-				case SOUTH, UP -> Direction.EAST;
-				case WEST -> Direction.SOUTH;
-			}, bendLeft).offset(switch (direction) {
+		private BlockPos bendPos(BlockPos startPos, int i, Direction bendDirection) {
+			return startPos.offset(this.direction, i).offset(bendDirection, bendLeft).offset(switch (bendDirection) {
 				case NORTH, SOUTH, EAST, WEST -> Direction.UP;
 				case UP -> Direction.SOUTH;
 				case DOWN -> Direction.NORTH;
