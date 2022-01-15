@@ -259,7 +259,7 @@ public class BetterTreesConfiguredFeatures {
 	private static TreeFeatureConfig.Builder jungleBuilder(boolean dead) {
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.JUNGLE_WOOD.getDefaultState()),
-			new BetterJungleTrunkPlacer(8, 20, 15, 0.2D),
+			new BetterJungleTrunkPlacer(8, 10, 18, 0.2D),
 			SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.JUNGLE_LEAVES).getDefaultState()),
 			new JungleFoliagePlacer(BiasedToBottomIntProvider.create(0, 0), ConstantIntProvider.create(0), 1),
 			new TwoLayersFeatureSize(30, 0, 3)
@@ -269,7 +269,7 @@ public class BetterTreesConfiguredFeatures {
 	private static TreeFeatureConfig.Builder megaJungleBuilder() {
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.JUNGLE_WOOD.getDefaultState()),
-			new BetterMegaJungleTrunkPlacer(16, 24, 24),
+			new BetterMegaJungleTrunkPlacer(16, 14, 10),
 			SimpleBlockStateProviderInvoker.invokeCtor((Blocks.JUNGLE_LEAVES).getDefaultState()),
 			new JungleFoliagePlacer(BiasedToBottomIntProvider.create(0, 0), ConstantIntProvider.create(0), 1),
 			new TwoLayersFeatureSize(40, 1, 6)

@@ -33,18 +33,43 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 
 	@Override
 	public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
+		// The trunk is a branch
+		Direction trunkBendDirection = Direction.byId(random.nextInt(2, 6));
+		Branch mainTrunk = new Branch(world, replacer, random, startPos, config, Direction.UP, trunkBendDirection, height, 0, 1, 0.05d);
+		// set dirt
 		setToDirt(world, replacer, random, startPos.down(), config);
 		setToDirt(world, replacer, random, startPos.down().east(), config);
 		setToDirt(world, replacer, random, startPos.down().south(), config);
 		setToDirt(world, replacer, random, startPos.down().south().east(), config);
-		// The trunk is a branch
-		Direction trunkBendDirection = Direction.byId(random.nextInt(2, 6));
-		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, trunkBendDirection, height, 0, 1, 0d, 0d, 0.1d);
 		// generate roots
 		for (int i = 2; i < 6; ++i) {
-			if (random.nextDouble() < 0.5D) {
-				int finalI = i;
-				getAndSetState(world, replacer, random, startPos.offset(Direction.byId(i)), config, blockState -> blockState.with(PillarBlock.AXIS, Direction.byId(finalI).getAxis()));
+			Direction direction = Direction.byId(i);
+			if (random.nextDouble() < 0.25D) {
+				startPos.offset(direction);
+				BlockPos rootPos = startPos.offset(direction);
+				rootPos = switch (i) {
+					case 2 -> // NORTH
+						rootPos.east();
+					case 3 -> // SOUTH
+						rootPos.south().east();
+					case 4 -> // WEST
+						rootPos.south();
+					case 5 -> // EAST
+						rootPos.east().south();
+					default -> rootPos;
+				};
+				getAndSetState(world, replacer, random, rootPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			}
+			if (random.nextDouble() < 0.25D) {
+				BlockPos rootPos = startPos.offset(direction);
+				rootPos = switch (i) {
+					case 3 -> // SOUTH
+						rootPos.south();
+					case 5 -> // EAST
+						rootPos.east();
+					default -> rootPos;
+				};
+				getAndSetState(world, replacer, random, rootPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 			}
 		}
 		// Also generates sub-branches recursively
@@ -56,7 +81,6 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		BiConsumer<BlockPos, BlockState> replacer;
 		Random random;
 		BlockPos startPos;
-		BlockPos rootPos;
 		TreeFeatureConfig config;
 		Direction direction;
 		Direction bendDirection;
@@ -64,31 +88,21 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		int level;
 		int length;
 		int maxLevel;
-		double leftBias;
-		double upBias;
 		double bendiness;
 
 		int clampBelow;
 
-		int bendLeft = 0;
-		int bendUp = 0;
-
-		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos startPos, BlockPos rootPos, TreeFeatureConfig config, Direction direction, Direction bendDirection, int length, int level, int maxLevel, double leftBias, double upBias, double bendiness) {
+		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos startPos, TreeFeatureConfig config, Direction direction, Direction bendDirection, int length, int level, int maxLevel, double bendiness) {
 			this.world = world;
 			this.replacer = replacer;
 			this.random = random;
 			this.startPos = startPos;
-			this.rootPos = rootPos;
 			this.config = config;
 			this.direction = direction;
 			this.length = length;
 			this.bendDirection = bendDirection;
 			this.level = level;
 			this.maxLevel = maxLevel;
-			this.leftBias = leftBias;
-			if (this.direction.getAxis() == Direction.Axis.Y)
-				this.upBias = this.leftBias; // If the branch is generating up or down, all directions use the leftBias
-			else this.upBias = upBias;
 			this.bendiness = bendiness;
 
 			// Don't spawn branches below 5 blocks along the branch if the branch is level 0 (i.e. the trunk)
@@ -101,80 +115,76 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 
 		public List<FoliagePlacer.TreeNode> generate() {
 			List<FoliagePlacer.TreeNode> list = new ArrayList<>();
+			BlockPos currentPos = startPos;
 			for (int i = 0; i < length; ++i) {
-//				bendDirection = Direction.byId(random.nextInt(2, 6));
-				BlockPos bendedPos = bendPos(startPos, i, bendDirection);
+				bendDirection = Direction.byId(random.nextInt(2, 6));
+				if (i >= 2 && level == 0) currentPos = newPos(currentPos, bendDirection);
+				else if (level == 0) currentPos = currentPos.up();
+				BlockPos oppositeCurrentPos = currentPos.offset(direction.getOpposite(), 1);
+				//				BlockPos bendedPos = bendPos(startPos, i, bendDirection);
 				if (level == 0) {
-					setTrunk(world, replacer, random, config, startPos, i, bendDirection);
+					setTrunk(world, replacer, random, config, currentPos);
 				} else { // makes branches look more joined up
 					if (i > 0)
-						getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+						getAndSetState(world, replacer, random, oppositeCurrentPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+					else
+						getAndSetState(world, replacer, random, startPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 					// set the block
-					getAndSetState(world, replacer, random, bendedPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+					getAndSetState(world, replacer, random, currentPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 				} // add foliage nodes
-				if (length < 6 && i == (length - 1)) {
-					list.add(new FoliagePlacer.TreeNode(bendedPos.up(), 0, false));
+				if (level != 0 && i == (length - 1)) {
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 0, false));
 				}
 				// generate more leaves at the top of the trunk
-				else if (length >= 6 && i == (length - 1)) {
-					list.add(new FoliagePlacer.TreeNode(bendedPos.up(), random.nextInt(1, 3), false));
+				else if (level == 0 && i == (length - 1)) {
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(1, 3), true));
 				}
-				updateBend();
 				// generates a branch
-				if (((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel) && i < length - 5) || (level == 0 && i == length - 1)) {
+				if (((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow) && (level < maxLevel) && i < length - 5)) || (level == 0 && i == length - 1)) {
 					int newLength = random.nextInt(3) + 2;
 					Direction newDirection = Direction.byId(random.nextInt(4) + 2);
 					Direction newBendDirection = Direction.byId(random.nextInt(2, 6));
-					BlockPos branchPos = bendedPos;
+					BlockPos branchPos = currentPos;
 					switch (newDirection.getId()) {
 						case 2: // NORTH
-							if (random.nextDouble() < 0.5) branchPos = bendedPos.east();
+							if (random.nextDouble() < 0.5) branchPos = branchPos.east();
+							break;
 						case 3: // SOUTH
+							branchPos = branchPos.south();
+							if (random.nextDouble() < 0.5) branchPos = branchPos.east();
 							break;
 						case 4: // WEST
+							if (random.nextDouble() < 0.5) branchPos = branchPos.south();
 							break;
 						case 5: // EAST
+							branchPos = branchPos.east();
+							if (random.nextDouble() < 0.5) branchPos = branchPos.south();
 							break;
 					}
-					Branch branch = new Branch(world, replacer, random, branchPos, rootPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, getDoubleInRange(0d, 1d), getDoubleInRange(0d, 1d), (0.6 * random.nextDouble()) + 0);
+					Branch branch = new Branch(world, replacer, random, branchPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, (0.6 * random.nextDouble()) + 0);
 					list.addAll(branch.generate());
 				}
 			}
 			return list;
 		}
 
-		private void setTrunk(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, BlockPos startPos, int i, Direction bendDirection) {
-			getAndSetState(world, replacer, random, bendPos(startPos, i, bendDirection), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i, bendDirection).east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i, bendDirection).south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i, bendDirection).east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection).east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection).south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, bendPos(startPos, i - 1, bendDirection).east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+		private void setTrunk(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, BlockPos currentPos) {
+			getAndSetState(world, replacer, random, currentPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, currentPos.east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, currentPos.south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, currentPos.east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, currentPos.down(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, currentPos.down().east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, currentPos.down().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, currentPos.down().east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 		}
 
-		private void updateBend() {
-			if (random.nextDouble() < bendiness) {
-				if (random.nextDouble() < leftBias) bendLeft++;
-				else bendLeft--;
-			}
-			if (random.nextDouble() < bendiness) {
-				if (random.nextDouble() < upBias) bendUp++;
-				else bendUp--;
-			}
-		}
-
-		private BlockPos bendPos(BlockPos startPos, int i, Direction bendDirection) {
-			return startPos.offset(this.direction, i).offset(bendDirection, bendLeft).offset(switch (bendDirection) {
+		private BlockPos newPos(BlockPos currentPos, Direction bendDirection) {
+			return currentPos.offset(this.direction, 1).offset(bendDirection, random.nextDouble() < bendiness ? 1 : 0).offset(switch (direction) {
 				case NORTH, SOUTH, EAST, WEST -> Direction.UP;
 				case UP -> Direction.SOUTH;
 				case DOWN -> Direction.NORTH;
-			}, bendUp);
-		}
-
-		private BlockPos bendPos(BlockPos startPos, int i) {
-			return bendPos(startPos, i, this.direction);
+			}, random.nextDouble() < bendiness ? 1 : 0);
 		}
 
 		private double getBranchProbability(int height, int maxHeight, double modifier, int clampBelow) {
@@ -188,10 +198,6 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 
 		private double gaussian(double x, double a, double b, double c) {
 			return a * Math.exp(-((Math.pow(x - b, 2)) / (2 * Math.pow(c, 2))));
-		}
-
-		private double getDoubleInRange(double min, double max) {
-			return ((max - min) * random.nextDouble()) + min;
 		}
 	}
 }
