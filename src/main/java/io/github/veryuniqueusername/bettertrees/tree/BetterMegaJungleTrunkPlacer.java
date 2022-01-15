@@ -38,7 +38,7 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		setToDirt(world, replacer, random, startPos.down().south(), config);
 		setToDirt(world, replacer, random, startPos.down().south().east(), config);
 		// The trunk is a branch
-		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 1, 0d, 0d, 0.1d, false);
+		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 1, 0d, 0d, 0.05d, false);
 		// generate roots
 		for (int i = 2; i < 6; ++i) {
 			if (random.nextDouble() < 0.5D) {
@@ -101,13 +101,8 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 			List<FoliagePlacer.TreeNode> list = new ArrayList<>();
 			for (int i = 0; i < length; ++i) {
 				BlockPos bendedPos = bendPos(startPos, i);
-				BlockPos.Mutable mutable = new BlockPos.Mutable(bendedPos.getX(), bendedPos.getY(), bendedPos.getZ());
 				if (level == 0) {
-//					setTrunk(world, replacer, random, mutable, config, startPos, i);
-					setLog(world, replacer, random, mutable, config, startPos, 0, i, 0);
-					setLog(world, replacer, random, mutable, config, startPos, 1, i, 0);
-					setLog(world, replacer, random, mutable, config, startPos, 1, i, 1);
-					setLog(world, replacer, random, mutable, config, startPos, 0, i, 1);
+					setTrunk(world, replacer, random, config, startPos, i);
 				}
 				else { // makes branches look more joined up
 					if (i > 0)
@@ -124,7 +119,7 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 				}
 				updateBend();
 				// generates a branch
-				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel) && i < length - 5) {
+				if (((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel) && i < length - 5) || (level == 0 && i == length - 1)) {
 					int newLength = random.nextInt(3) + 2;
 					Direction newDirection = Direction.byId(random.nextInt(4) + 2);
 					Branch branch = new Branch(world, replacer, random, bendedPos, rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(0d, 1d), getDoubleInRange(0d, 1d), (0.6 * random.nextDouble()) + 0, false);
@@ -134,16 +129,15 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 			return list;
 		}
 
-		private void setTrunk(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos.Mutable pos, TreeFeatureConfig config, BlockPos startPos, int y) {
-			setLog(world, replacer, random, pos, config, startPos, 0, y, 0);
-			setLog(world, replacer, random, pos, config, startPos, 1, y, 0);
-			setLog(world, replacer, random, pos, config, startPos, 1, y, 1);
-			setLog(world, replacer, random, pos, config, startPos, 0, y, 1);
-		}
-
-		private static void setLog(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos.Mutable pos, TreeFeatureConfig config, BlockPos startPos, int x, int y, int z) {
-			pos.set(pos, x, 0, z);
-			GiantTrunkPlacer.trySetState(world, replacer, random, pos, config);
+		private void setTrunk(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, BlockPos startPos, int i) {
+			getAndSetState(world, replacer, random, bendPos(startPos, i), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i).east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i).south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i).east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i - 1), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i - 1).east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i - 1).south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+			getAndSetState(world, replacer, random, bendPos(startPos, i - 1).east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 		}
 
 		private void updateBend() {
