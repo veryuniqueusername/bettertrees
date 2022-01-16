@@ -1,5 +1,5 @@
 # BetterTrees
 
-A custom tree generation mod for Fabric 1.18.
+A custom tree generation mod for Fabric.
 
-Fork of [arthomnix/spaghettitrees](https://github.com/arthomnix/spaghettitrees)
+Some parts from [arthomnix/spaghettitrees](https://github.com/arthomnix/spaghettitrees)

@@ -35,7 +35,7 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 	public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
 		// The trunk is a branch
 		Direction trunkBendDirection = Direction.byId(random.nextInt(2, 6));
-		Branch mainTrunk = new Branch(world, replacer, random, startPos, config, Direction.UP, trunkBendDirection, height, 0, 1, 0.05d);
+		Branch mainTrunk = new Branch(world, replacer, random, startPos, config, Direction.UP, trunkBendDirection, height, 0, 1, 0.05d, false);
 		// set dirt
 		setToDirt(world, replacer, random, startPos.down(), config);
 		setToDirt(world, replacer, random, startPos.down().east(), config);
@@ -89,10 +89,11 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		int length;
 		int maxLevel;
 		double bendiness;
+		boolean coveredWithLeaves;
 
 		int clampBelow;
 
-		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos startPos, TreeFeatureConfig config, Direction direction, Direction bendDirection, int length, int level, int maxLevel, double bendiness) {
+		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos startPos, TreeFeatureConfig config, Direction direction, Direction bendDirection, int length, int level, int maxLevel, double bendiness, boolean coveredWithLeaves) {
 			this.world = world;
 			this.replacer = replacer;
 			this.random = random;
@@ -104,6 +105,7 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 			this.level = level;
 			this.maxLevel = maxLevel;
 			this.bendiness = bendiness;
+			this.coveredWithLeaves = coveredWithLeaves;
 
 			// Don't spawn branches below 5 blocks along the branch if the branch is level 0 (i.e. the trunk)
 			if (level == 0) {
@@ -117,11 +119,10 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 			List<FoliagePlacer.TreeNode> list = new ArrayList<>();
 			BlockPos currentPos = startPos;
 			for (int i = 0; i < length; ++i) {
-				bendDirection = Direction.byId(random.nextInt(2, 6));
-				if (i >= 2 && level == 0) currentPos = newPos(currentPos, bendDirection);
-				else if (level == 0) currentPos = currentPos.up();
+				if (level == 0) bendDirection = Direction.byId(random.nextInt(2, 6));
+				if (i < 2 && level == 0) currentPos = currentPos.up();
+				else currentPos = newPos(currentPos, bendDirection);
 				BlockPos oppositeCurrentPos = currentPos.offset(direction.getOpposite(), 1);
-				//				BlockPos bendedPos = bendPos(startPos, i, bendDirection);
 				if (level == 0) {
 					setTrunk(world, replacer, random, config, currentPos);
 				} else { // makes branches look more joined up
@@ -132,7 +133,10 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 					// set the block
 					getAndSetState(world, replacer, random, currentPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 				} // add foliage nodes
-				if (level != 0 && i == (length - 1)) {
+				if (coveredWithLeaves) {
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(1, 3), false));
+				}
+				else if (level != 0 && i == (length - 1)) {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 0, false));
 				}
 				// generate more leaves at the top of the trunk
@@ -140,10 +144,10 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(1, 3), true));
 				}
 				// generates a branch
-				if (((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow) && (level < maxLevel) && i < length - 5)) || (level == 0 && i == length - 1)) {
-					int newLength = random.nextInt(3) + 2;
+				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow) && (level < maxLevel) && i < length - 5)) {
+					int newLength = random.nextInt(3) + 5;
 					Direction newDirection = Direction.byId(random.nextInt(4) + 2);
-					Direction newBendDirection = Direction.byId(random.nextInt(2, 6));
+					Direction newBendDirection = Direction.UP;
 					BlockPos branchPos = currentPos;
 					switch (newDirection.getId()) {
 						case 2: // NORTH
@@ -161,8 +165,39 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 							if (random.nextDouble() < 0.5) branchPos = branchPos.south();
 							break;
 					}
-					Branch branch = new Branch(world, replacer, random, branchPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, (0.6 * random.nextDouble()) + 0);
+					Branch branch = new Branch(world, replacer, random, branchPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, (0.6 * random.nextDouble()) + 0, false);
 					list.addAll(branch.generate());
+				} // TOP BRANCHES
+				else if (level == 0 && i >= length - 2) {
+					for (int j = 0; j < 6; ++j) {
+						int newLength = random.nextInt(3) + 4;
+						Direction newDirection = Direction.byId(random.nextInt(4) + 2);
+						Direction newBendDirection;
+						newBendDirection = switch (newDirection) {
+							case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST: Direction.WEST;
+							case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH: Direction.SOUTH;
+							default -> throw new IllegalStateException("Unexpected value: " + newDirection);
+						};
+						BlockPos branchPos = currentPos;
+						switch (newDirection.getId()) {
+							case 2: // NORTH
+								if (random.nextDouble() < 0.5) branchPos = branchPos.east();
+								break;
+							case 3: // SOUTH
+								branchPos = branchPos.south();
+								if (random.nextDouble() < 0.5) branchPos = branchPos.east();
+								break;
+							case 4: // WEST
+								if (random.nextDouble() < 0.5) branchPos = branchPos.south();
+								break;
+							case 5: // EAST
+								branchPos = branchPos.east();
+								if (random.nextDouble() < 0.5) branchPos = branchPos.south();
+								break;
+						}
+						Branch branch = new Branch(world, replacer, random, branchPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, (0.4 * random.nextDouble()) + 0.3, true);
+						list.addAll(branch.generate());
+					}
 				}
 			}
 			return list;
@@ -184,7 +219,7 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 				case NORTH, SOUTH, EAST, WEST -> Direction.UP;
 				case UP -> Direction.SOUTH;
 				case DOWN -> Direction.NORTH;
-			}, random.nextDouble() < bendiness ? 1 : 0);
+			}, random.nextDouble() < bendiness && !this.coveredWithLeaves ? 1 : 0);
 		}
 
 		private double getBranchProbability(int height, int maxHeight, double modifier, int clampBelow) {
