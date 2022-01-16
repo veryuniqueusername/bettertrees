@@ -35,7 +35,7 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 	public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
 		// The trunk is a branch
 		Direction trunkBendDirection = Direction.byId(random.nextInt(2, 6));
-		Branch mainTrunk = new Branch(world, replacer, random, startPos, config, Direction.UP, trunkBendDirection, height, 0, 1, 0.05d, false);
+		Branch mainTrunk = new Branch(world, replacer, random, startPos, config, Direction.UP, trunkBendDirection, height, 0, 2, 0.05d, 0.05d, false);
 		// set dirt
 		setToDirt(world, replacer, random, startPos.down(), config);
 		setToDirt(world, replacer, random, startPos.down().east(), config);
@@ -88,12 +88,14 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		int level;
 		int length;
 		int maxLevel;
-		double bendiness;
+		double firstBendiness;
+		double secondBendiness;
 		boolean coveredWithLeaves;
 
-		int clampBelow;
+		int noBranchesBelow;
+		int noBranchesAbove;
 
-		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos startPos, TreeFeatureConfig config, Direction direction, Direction bendDirection, int length, int level, int maxLevel, double bendiness, boolean coveredWithLeaves) {
+		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos startPos, TreeFeatureConfig config, Direction direction, Direction bendDirection, int length, int level, int maxLevel, double firstBendiness, double secondBendiness, boolean coveredWithLeaves) {
 			this.world = world;
 			this.replacer = replacer;
 			this.random = random;
@@ -104,14 +106,17 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 			this.bendDirection = bendDirection;
 			this.level = level;
 			this.maxLevel = maxLevel;
-			this.bendiness = bendiness;
+			this.firstBendiness = firstBendiness;
+			this.secondBendiness = secondBendiness;
 			this.coveredWithLeaves = coveredWithLeaves;
 
 			// Don't spawn branches below 5 blocks along the branch if the branch is level 0 (i.e. the trunk)
 			if (level == 0) {
-				this.clampBelow = 10;
+				this.noBranchesBelow = 10;
+				this.noBranchesAbove = 8;
 			} else {
-				this.clampBelow = 0;
+				this.noBranchesBelow = 0;
+				this.noBranchesAbove = 0;
 			}
 		}
 
@@ -135,67 +140,55 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 				} // add foliage nodes
 				if (coveredWithLeaves) {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(1, 3), false));
-				}
-				else if (level != 0 && i == (length - 1)) {
-					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 0, false));
+				} else if (level != 0 && i == (length - 1)) {
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 2, false));
 				}
 				// generate more leaves at the top of the trunk
 				else if (level == 0 && i == (length - 1)) {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(1, 3), true));
 				}
-				// generates a branch
-				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow) && (level < maxLevel) && i < length - 5)) {
-					int newLength = random.nextInt(3) + 5;
+				// branches
+				if (random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, noBranchesBelow, noBranchesAbove) && level == 0) {
+					int newLength = random.nextInt(3) + 8;
 					Direction newDirection = Direction.byId(random.nextInt(4) + 2);
-					Direction newBendDirection = Direction.UP;
-					BlockPos branchPos = currentPos;
-					switch (newDirection.getId()) {
-						case 2: // NORTH
-							if (random.nextDouble() < 0.5) branchPos = branchPos.east();
-							break;
-						case 3: // SOUTH
-							branchPos = branchPos.south();
-							if (random.nextDouble() < 0.5) branchPos = branchPos.east();
-							break;
-						case 4: // WEST
-							if (random.nextDouble() < 0.5) branchPos = branchPos.south();
-							break;
-						case 5: // EAST
-							branchPos = branchPos.east();
-							if (random.nextDouble() < 0.5) branchPos = branchPos.south();
-							break;
-					}
-					Branch branch = new Branch(world, replacer, random, branchPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, (0.6 * random.nextDouble()) + 0, false);
+					Direction newBendDirection;
+					newBendDirection = switch (newDirection) {
+						case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST : Direction.WEST;
+						case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH : Direction.SOUTH;
+						default -> throw new IllegalStateException("Unexpected value: " + newDirection);
+					};
+					BlockPos branchPos = getBranchPos(currentPos, newDirection);
+					//					MOD_LOGGER.info("branch, length: " + newLength + "; direction: " + newDirection + "; bend: " + newBendDirection + "; pos: " + branchPos + "; level: " + level);
+					Branch branch = new Branch(world, replacer, random, branchPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, (0.6 * random.nextDouble()) + 0.4, (0.4 * random.nextDouble()) + 0.15, false);
 					list.addAll(branch.generate());
-				} // TOP BRANCHES
+				}
+				// subbranches
+				else if (random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, noBranchesBelow, noBranchesAbove) && level == 1 && i > length - 3) {
+					int newLength = random.nextInt(1, 3);
+					Direction newDirection = Direction.byId(random.nextInt(4) + 2);
+					Direction newBendDirection;
+					newBendDirection = switch (newDirection) {
+						case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST : Direction.WEST;
+						case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH : Direction.SOUTH;
+						default -> throw new IllegalStateException("Unexpected value: " + newDirection);
+					};
+					BlockPos branchPos = getBranchPos(currentPos, newDirection);
+					Branch branch = new Branch(world, replacer, random, branchPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, (0.6 * random.nextDouble()) + 0, (0.2 * random.nextDouble()) + 0.05, false);
+					list.addAll(branch.generate());
+				}
+				// top branches
 				else if (level == 0 && i >= length - 2) {
 					for (int j = 0; j < 6; ++j) {
 						int newLength = random.nextInt(3) + 4;
 						Direction newDirection = Direction.byId(random.nextInt(4) + 2);
 						Direction newBendDirection;
 						newBendDirection = switch (newDirection) {
-							case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST: Direction.WEST;
-							case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH: Direction.SOUTH;
+							case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST : Direction.WEST;
+							case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH : Direction.SOUTH;
 							default -> throw new IllegalStateException("Unexpected value: " + newDirection);
 						};
-						BlockPos branchPos = currentPos;
-						switch (newDirection.getId()) {
-							case 2: // NORTH
-								if (random.nextDouble() < 0.5) branchPos = branchPos.east();
-								break;
-							case 3: // SOUTH
-								branchPos = branchPos.south();
-								if (random.nextDouble() < 0.5) branchPos = branchPos.east();
-								break;
-							case 4: // WEST
-								if (random.nextDouble() < 0.5) branchPos = branchPos.south();
-								break;
-							case 5: // EAST
-								branchPos = branchPos.east();
-								if (random.nextDouble() < 0.5) branchPos = branchPos.south();
-								break;
-						}
-						Branch branch = new Branch(world, replacer, random, branchPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, (0.4 * random.nextDouble()) + 0.3, true);
+						BlockPos branchPos = getBranchPos(currentPos, newDirection);
+						Branch branch = new Branch(world, replacer, random, branchPos, config, newDirection, newBendDirection, newLength, level + 1, maxLevel, (0.7 * random.nextDouble()) + 0.3, (0.05 * random.nextDouble()) + 0.01, true);
 						list.addAll(branch.generate());
 					}
 				}
@@ -215,20 +208,41 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 		}
 
 		private BlockPos newPos(BlockPos currentPos, Direction bendDirection) {
-			return currentPos.offset(this.direction, 1).offset(bendDirection, random.nextDouble() < bendiness ? 1 : 0).offset(switch (direction) {
+			return currentPos.offset(this.direction, 1).offset(bendDirection, random.nextDouble() < firstBendiness ? 1 : 0).offset(switch (direction) {
 				case NORTH, SOUTH, EAST, WEST -> Direction.UP;
 				case UP -> Direction.SOUTH;
 				case DOWN -> Direction.NORTH;
-			}, random.nextDouble() < bendiness && !this.coveredWithLeaves ? 1 : 0);
+			}, random.nextDouble() < secondBendiness ? 1 : 0);
 		}
 
-		private double getBranchProbability(int height, int maxHeight, double modifier, int clampBelow) {
+		private BlockPos getBranchPos(BlockPos currentPos, Direction newDirection) {
+			BlockPos branchPos = currentPos;
+			switch (newDirection.getId()) {
+				case 2: // NORTH
+					if (random.nextDouble() < 0.5) branchPos = branchPos.east();
+					break;
+				case 3: // SOUTH
+					branchPos = branchPos.south();
+					if (random.nextDouble() < 0.5) branchPos = branchPos.east();
+					break;
+				case 4: // WEST
+					if (random.nextDouble() < 0.5) branchPos = branchPos.south();
+					break;
+				case 5: // EAST
+					branchPos = branchPos.east();
+					if (random.nextDouble() < 0.5) branchPos = branchPos.south();
+					break;
+			}
+			return branchPos;
+		}
+
+		private double getBranchProbability(int height, int maxHeight, double modifier, int clampBelow, int clampAbove) {
 			// Get the probability of a branch generating at a particular point along the branch. If the branch is level 0, uses a normal distribution, else just uses half the branch probability modifier
-			if (height < clampBelow) return 0D;
+			if (height < clampBelow || height > maxHeight - clampAbove) return 0D;
 			if (this.level == 0) {
 				double normalizedHeight = (double) height / maxHeight;
 				return gaussian(normalizedHeight, modifier, 0.75D, 0.4D);
-			} else return modifier / 2d;
+			} else return modifier / 0.2d;
 		}
 
 		private double gaussian(double x, double a, double b, double c) {
