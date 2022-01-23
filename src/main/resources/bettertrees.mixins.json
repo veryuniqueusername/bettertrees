@@ -9,7 +9,6 @@
     "DefaultBiomeFeaturesMixin",
     "FoliagePlacerInvoker",
     "LargeOakFoliagePlacerMixin",
-    "LeavesBlockMixin",
     "SaplingBlockInvoker",
     "SimpleBlockStateProviderInvoker",
     "TreeFeatureMixin",
