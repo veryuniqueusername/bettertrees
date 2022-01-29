@@ -22,9 +22,6 @@ import org.spongepowered.asm.mixin.Mixin;
 
 import java.util.Random;
 
-import static io.github.veryuniqueusername.bettertrees.BetterTrees.MOD_LOGGER;
-import static io.github.veryuniqueusername.bettertrees.BetterTrees.amount;
-
 @Mixin(LeavesBlock.class)
 public class LeavesBlockMixin extends Block {
 	private static final IntProperty DISTANCE = Properties.DISTANCE_1_7;
@@ -33,7 +30,7 @@ public class LeavesBlockMixin extends Block {
 
 	public LeavesBlockMixin(Settings properties) {
 		super(properties);
-		this.setDefaultState(this.stateManager.getDefaultState().with(DISTANCE, 7).with(PERSISTENT, false).with(EXPOSED, true));
+		this.setDefaultState(this.getStateManager().getDefaultState().with(DISTANCE, 7).with(PERSISTENT, false).with(EXPOSED, true));
 	}
 
 	@Override
@@ -43,8 +40,6 @@ public class LeavesBlockMixin extends Block {
 
 	@Override
 	public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-		amount += 1;
-		MOD_LOGGER.info(amount);
 		world.setBlockState(pos, getExposed(updateDistanceFromLogs(state, world, pos), world, pos), Block.NOTIFY_ALL);
 	}
 
@@ -59,7 +54,8 @@ public class LeavesBlockMixin extends Block {
 		BlockPos.Mutable mutable = new BlockPos.Mutable();
 		for (Direction direction: Direction.values()) {
 			mutable.set(pos, direction);
-			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock)) return state.with(EXPOSED, true);
+//			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock)) return state.with(EXPOSED, true);
+			if (!world.getBlockState(mutable).isOpaque()) return state.with(EXPOSED, true);
 		}
 		return state.with(EXPOSED, false);
 	}

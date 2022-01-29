@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.BiConsumer;
 
-import static io.github.veryuniqueusername.bettertrees.BetterTrees.MOD_LOGGER;
-
 public class BetterShortBirchTrunkPlacer extends TrunkPlacer {
 	private int branchLengthModifier; // gets subtracted from the length of each new Branch (parent branch level > 0)
 	private int initialBranchLengthModifier; // gets subtracted from the length of each new Branch generated off the trunk
