@@ -15,6 +15,8 @@ public class BetterTrees implements ModInitializer {
 	public static final String MOD_ID = "bettertrees";
   public static final Logger MOD_LOGGER = LogManager.getLogger(MOD_ID);
 
+	public static int amount = 0;
+
 
 	@Override
 	public void onInitialize() {
