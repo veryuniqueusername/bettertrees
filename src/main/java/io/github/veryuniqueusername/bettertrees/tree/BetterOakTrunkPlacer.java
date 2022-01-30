@@ -27,6 +27,8 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 	private final double minUpBias;
 	private final double maxUpBias;
 
+	private BlockPos trunkTop;
+
 	public static final Codec<BetterOakTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
 		fillTrunkPlacerFields(instance).apply(instance, BetterOakTrunkPlacer::new));
 
@@ -123,12 +125,15 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 				// set the block
 				getAndSetState(world, replacer, random, bendPos(startPos, i), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
 				// add foliage nodes
-				if (nodesAllAlong && (random.nextDouble() < 0.75 || i == length - 1))
+				if (nodesAllAlong && (random.nextDouble() < 0.45 || i == length - 1) && i > length - 4)
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 0, false));
 				else if (i == (length - 1) && level == 0) // generate more leaves at the top of the trunk
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
 				updateBend();
 				// generates a sub-branch
+				if (level == 0) {
+					trunkTop = bendPos(startPos, i);
+				}
 				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel)) {
 					int newLength = length - (random.nextInt(2) + 1);
 					if (level == 0) newLength = newLength - initialBranchLengthModifier;

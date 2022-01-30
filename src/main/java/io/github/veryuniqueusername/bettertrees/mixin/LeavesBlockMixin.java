@@ -55,7 +55,7 @@ public class LeavesBlockMixin extends Block {
 		for (Direction direction: Direction.values()) {
 			mutable.set(pos, direction);
 //			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock)) return state.with(EXPOSED, true);
-			if (!world.getBlockState(mutable).isOpaque()) return state.with(EXPOSED, true);
+			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock) && !world.getBlockState(mutable).isOpaque()) return state.with(EXPOSED, true);
 		}
 		return state.with(EXPOSED, false);
 	}
