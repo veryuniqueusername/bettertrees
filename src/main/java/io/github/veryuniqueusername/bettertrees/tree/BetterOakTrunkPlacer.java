@@ -27,8 +27,6 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 	private final double minUpBias;
 	private final double maxUpBias;
 
-	private BlockPos trunkTop;
-
 	public static final Codec<BetterOakTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
 		fillTrunkPlacerFields(instance).apply(instance, BetterOakTrunkPlacer::new));
 
@@ -131,9 +129,6 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
 				updateBend();
 				// generates a sub-branch
-				if (level == 0) {
-					trunkTop = bendPos(startPos, i);
-				}
 				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel)) {
 					int newLength = length - (random.nextInt(2) + 1);
 					if (level == 0) newLength = newLength - initialBranchLengthModifier;

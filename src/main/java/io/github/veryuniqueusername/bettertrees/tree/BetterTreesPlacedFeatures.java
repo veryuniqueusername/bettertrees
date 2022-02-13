@@ -217,6 +217,14 @@ public class BetterTreesPlacedFeatures {
 		)
 	));
 
+	public static final PlacedFeature TREE_BETTER_DARK_OAK = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_DARK_OAK, ImmutableList.of(
+		BlockFilterPlacementModifier.of(
+			BlockPredicate.wouldSurvive(
+				Blocks.DARK_OAK_SAPLING.getDefaultState(), BlockPos.ORIGIN
+			)
+		)
+	));
+
 	public static final PlacedFeature BETTER_FOREST_TREES = BetterTreesConfiguredFeatures.BETTER_FOREST_TREES.withPlacement(
 		VegetationPlacedFeatures.modifiers(
 			PlacedFeatures.createCountExtraModifier(8, 0.1f, 1)
@@ -364,6 +372,8 @@ public class BetterTreesPlacedFeatures {
 		registerPlacedFeature("dead_jungle", TREE_DEAD_JUNGLE);
 		registerPlacedFeature("better_mega_jungle", TREE_BETTER_MEGA_JUNGLE);
 		registerPlacedFeature("better_mega_jungle_no_vine", TREE_BETTER_MEGA_JUNGLE_NO_VINE);
+
+		registerPlacedFeature("better_dark_oak", TREE_BETTER_DARK_OAK);
 
 		registerPlacedFeature("better_forest_trees", BETTER_FOREST_TREES);
 		registerPlacedFeature("better_flower_forest_trees", BETTER_FLOWER_FOREST_TREES);

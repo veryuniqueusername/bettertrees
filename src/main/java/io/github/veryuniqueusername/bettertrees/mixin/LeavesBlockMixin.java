@@ -3,8 +3,8 @@ package io.github.veryuniqueusername.bettertrees.mixin;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.LeavesBlock;
+import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -13,10 +13,7 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.tag.BlockTags;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import org.spongepowered.asm.mixin.Mixin;
 
@@ -30,7 +27,7 @@ public class LeavesBlockMixin extends Block {
 
 	public LeavesBlockMixin(Settings properties) {
 		super(properties);
-		this.setDefaultState(this.getStateManager().getDefaultState().with(DISTANCE, 7).with(PERSISTENT, false).with(EXPOSED, true));
+		this.setDefaultState(this.getStateManager().getDefaultState().with(DISTANCE, 7).with(PERSISTENT, false).with(EXPOSED, false));
 	}
 
 	@Override
@@ -40,24 +37,25 @@ public class LeavesBlockMixin extends Block {
 
 	@Override
 	public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-		world.setBlockState(pos, getExposed(updateDistanceFromLogs(state, world, pos), world, pos), Block.NOTIFY_ALL);
+		world.setBlockState(pos, updateState(state, world, pos), Block.NOTIFY_ALL);
+	}
+
+	@Override
+	public boolean hasRandomTicks(BlockState state) {
+		return (state.get(DISTANCE) == 7 && !state.get(PERSISTENT));
+	}
+
+	@Override
+	public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+		if (!state.get(PERSISTENT) && state.get(DISTANCE) == 7) {
+			dropStacks(state, world, pos);
+			world.removeBlock(pos, false);
+		}
 	}
 
 	@Override
 	public BlockState getPlacementState(ItemPlacementContext ctx) {
-		WorldAccess world = ctx.getWorld();
-		BlockPos pos = ctx.getBlockPos();
-		return updateDistanceFromLogs(this.getDefaultState().with(PERSISTENT, true).with(EXPOSED, true), world, pos);
-	}
-
-	private static BlockState getExposed(BlockState state, WorldAccess world, BlockPos pos) {
-		BlockPos.Mutable mutable = new BlockPos.Mutable();
-		for (Direction direction: Direction.values()) {
-			mutable.set(pos, direction);
-//			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock)) return state.with(EXPOSED, true);
-			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock) && !world.getBlockState(mutable).isOpaque()) return state.with(EXPOSED, true);
-		}
-		return state.with(EXPOSED, false);
+		return updateState(this.getDefaultState().with(PERSISTENT, true), ctx.getWorld(), ctx.getBlockPos());
 	}
 
 	@Override
@@ -66,18 +64,37 @@ public class LeavesBlockMixin extends Block {
 		if (i != 1 || state.get(DISTANCE) != i) {
 			world.createAndScheduleBlockTick(pos, this, 1);
 		}
+		else if (getExposed(world, neighborPos) && state.get(EXPOSED)) {
+			world.createAndScheduleBlockTick(pos, this, 1);
+		}
 		return state;
 	}
 
-	private static BlockState updateDistanceFromLogs(BlockState state, WorldAccess world, BlockPos pos) {
+	private static BlockState updateState(BlockState state, WorldAccess world, BlockPos pos) {
 		int i = 7;
+		boolean exposed = false;
 		BlockPos.Mutable mutable = new BlockPos.Mutable();
 		for (Direction direction: Direction.values()) {
 			mutable.set(pos, direction);
 			i = Math.min(i, getDistanceFromLog(world.getBlockState(mutable)) + 1);
 			if (i == 1) break;
 		}
-		return state.with(DISTANCE, i);
+		for (Direction direction: Direction.values()) {
+			mutable.set(pos, direction);
+			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock) && !world.getBlockState(mutable).isOpaque())
+				exposed = true;
+		}
+		return state.with(DISTANCE, i).with(EXPOSED, exposed);
+	}
+
+	private static Boolean getExposed(WorldAccess world, BlockPos pos) {
+		BlockPos.Mutable mutable = new BlockPos.Mutable();
+		for (Direction direction: Direction.values()) {
+			mutable.set(pos, direction);
+			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock) && !world.getBlockState(mutable).isOpaque())
+				return true;
+		}
+		return false;
 	}
 
 	private static int getDistanceFromLog(BlockState state) {
@@ -91,44 +108,7 @@ public class LeavesBlockMixin extends Block {
 	}
 
 	@Override
-	public VoxelShape getSidesShape(BlockState state, BlockView world, BlockPos pos) {
-		return VoxelShapes.empty();
-	}
-
-	@Override
-	public boolean hasRandomTicks(BlockState state) {
-		return state.get(DISTANCE) == 7 && !state.get(PERSISTENT);
-	}
-
-	@Override
-	public void randomTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
-		if (!state.get(PERSISTENT) && state.get(DISTANCE) == 7) {
-			dropStacks(state, world, pos);
-			world.removeBlock(pos, false);
-		}
-	}
-
-	@Override
-	public int getOpacity(BlockState state, BlockView world, BlockPos pos) {
-		return 0;
-	}
-
-	@Override
-	public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
-		if (!world.hasRain(pos.up())) {
-			return;
-		}
-		if (random.nextInt(15) != 1) {
-			return;
-		}
-		BlockPos blockPos = pos.down();
-		BlockState blockState = world.getBlockState(blockPos);
-		if (blockState.isOpaque() && blockState.isSideSolidFullSquare(world, blockPos, Direction.UP)) {
-			return;
-		}
-		double d = (double) pos.getX() + random.nextDouble();
-		double e = (double) pos.getY() - 0.05;
-		double f = (double) pos.getZ() + random.nextDouble();
-		world.addParticle(ParticleTypes.DRIPPING_WATER, d, e, f, 0.0, 0.0, 0.0);
+	public boolean canPathfindThrough(BlockState state, BlockView world, BlockPos pos, NavigationType type) {
+		return false;
 	}
 }
