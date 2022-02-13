@@ -298,10 +298,10 @@ public class BetterTreesConfiguredFeatures {
 	private static TreeFeatureConfig.Builder darkOakBuilder() {
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.DARK_OAK_WOOD.getDefaultState()),
-			new BetterDarkOakTrunkPlacer(7, 6, 4),
+			new BetterDarkOakTrunkPlacer(6, 8, 4),
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.DARK_OAK_LEAVES.getDefaultState()),
-			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(1, 3), ConstantIntProvider.create(0), BiasedToBottomIntProvider.create(1, 2), 50),
-			new TwoLayersFeatureSize(8, 1, 6)
+			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(2, 4), ConstantIntProvider.create(0), BiasedToBottomIntProvider.create(2, 4), 60),
+			new TwoLayersFeatureSize(8, 1, 9)
 		);
 	}
 

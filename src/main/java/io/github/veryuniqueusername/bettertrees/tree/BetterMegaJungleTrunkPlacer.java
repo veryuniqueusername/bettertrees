@@ -166,7 +166,7 @@ public class BetterMegaJungleTrunkPlacer extends GiantTrunkPlacer {
 						}
 					}
 				}
-				if (i < 2 && level == 0) currentPos = currentPos.up();
+				if (i < 4 && level == 0) currentPos = currentPos.up();
 				else currentPos = newPos(currentPos, bendDirection);
 				BlockPos oppositeCurrentPos = currentPos.offset(direction.getOpposite(), 1);
 				if (level == 0) {
