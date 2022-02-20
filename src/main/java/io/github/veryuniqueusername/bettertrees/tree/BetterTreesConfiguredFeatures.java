@@ -13,10 +13,7 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.feature.*;
 import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
-import net.minecraft.world.gen.foliage.BlobFoliagePlacer;
-import net.minecraft.world.gen.foliage.BushFoliagePlacer;
-import net.minecraft.world.gen.foliage.JungleFoliagePlacer;
-import net.minecraft.world.gen.foliage.RandomSpreadFoliagePlacer;
+import net.minecraft.world.gen.foliage.*;
 import net.minecraft.world.gen.treedecorator.BeehiveTreeDecorator;
 import net.minecraft.world.gen.treedecorator.CocoaBeansTreeDecorator;
 import net.minecraft.world.gen.treedecorator.LeavesVineTreeDecorator;
@@ -39,6 +36,8 @@ public class BetterTreesConfiguredFeatures {
 
 	public static final TrunkPlacerType<BetterJungleTrunkPlacer> BETTER_JUNGLE_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_jungle_trunk_placer", BetterJungleTrunkPlacer.CODEC);
 	public static final TrunkPlacerType<BetterMegaJungleTrunkPlacer> BETTER_MEGA_JUNGLE_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_mega_jungle_trunk_placer", BetterMegaJungleTrunkPlacer.CODEC);
+
+	public static final TrunkPlacerType<BetterAcaciaTrunkPlacer> BETTER_ACACIA_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_acacia_trunk_placer", BetterAcaciaTrunkPlacer.CODEC);
 
 	public static final TrunkPlacerType<BetterDarkOakTrunkPlacer> BETTER_DARK_OAK_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_dark_oak_trunk_placer", BetterDarkOakTrunkPlacer.CODEC);
 
@@ -75,6 +74,10 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_DEAD_JUNGLE = Feature.TREE.configure(jungleBuilder(true, true).decorators(ImmutableList.of(TrunkVineTreeDecorator.INSTANCE)).build());
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_MEGA_JUNGLE = Feature.TREE.configure(megaJungleBuilder().decorators(ImmutableList.of(TrunkVineTreeDecorator.INSTANCE, LeavesVineTreeDecorator.INSTANCE)).build());
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_MEGA_JUNGLE_NO_VINE = Feature.TREE.configure(megaJungleBuilder().build());
+
+	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_ACACIA = Feature.TREE.configure(acaciaBuilder(false).build());
+	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_DEAD_ACACIA = Feature.TREE.configure(acaciaBuilder(true).build());
+
 
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_DARK_OAK = Feature.TREE.configure(darkOakBuilder().build());
 
@@ -167,7 +170,8 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_SAVANNAH_TREES = Feature.RANDOM_SELECTOR.configure(
 		new RandomFeatureConfig(
 			List.of(
-				new RandomFeatureEntry(TreePlacedFeatures.ACACIA_CHECKED, 0.8f)
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_ACACIA, 0.8f),
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_DEAD_ACACIA, 0.05f)
 			),
 			BetterTreesPlacedFeatures.TREE_BETTER_OAK
 		)
@@ -223,6 +227,9 @@ public class BetterTreesConfiguredFeatures {
 		registerConfiguredFeature("dead_jungle", TREE_DEAD_JUNGLE);
 		registerConfiguredFeature("better_mega_jungle", TREE_BETTER_MEGA_JUNGLE);
 		registerConfiguredFeature("better_mega_jungle_no_vine", TREE_BETTER_MEGA_JUNGLE_NO_VINE);
+
+		registerConfiguredFeature("better_acacia", TREE_BETTER_ACACIA);
+		registerConfiguredFeature("dead_acacia", TREE_DEAD_ACACIA);
 
 		registerConfiguredFeature("better_dark_oak", TREE_BETTER_DARK_OAK);
 
@@ -292,6 +299,16 @@ public class BetterTreesConfiguredFeatures {
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.JUNGLE_LEAVES.getDefaultState()),
 			new JungleFoliagePlacer(BiasedToBottomIntProvider.create(0, 0), ConstantIntProvider.create(0), 1),
 			new TwoLayersFeatureSize(28, 1, 3)
+		);
+	}
+
+	private static TreeFeatureConfig.Builder acaciaBuilder(boolean dead) {
+		return new TreeFeatureConfig.Builder(
+			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.ACACIA_WOOD.getDefaultState()),
+			new BetterAcaciaTrunkPlacer(3, 2, 0),
+			SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.ACACIA_LEAVES).getDefaultState()),
+			new AcaciaFoliagePlacer(BiasedToBottomIntProvider.create(1, 2), ConstantIntProvider.create(0)),
+			new TwoLayersFeatureSize(3, 0, 3)
 		);
 	}
 
