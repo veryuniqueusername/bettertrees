@@ -16,6 +16,11 @@ public class BlocksMixin {
         return SaplingBlockInvoker.invokeCtor(new BetterOakSaplingGenerator(), settings);
     }
 
+    @Redirect(method = "<clinit>", at = @At(target = "net/minecraft/block/SaplingBlock", value = "NEW", ordinal = 1))
+    private static SaplingBlock returnBetterSpruceSaplingBlock(SaplingGenerator generator, AbstractBlock.Settings settings) {
+        return SaplingBlockInvoker.invokeCtor(new BetterSpruceSaplingGenerator(), settings);
+    }
+
     @Redirect(method = "<clinit>", at = @At(target = "net/minecraft/block/SaplingBlock", value = "NEW", ordinal = 2))
     private static SaplingBlock returnBetterBirchSaplingBlock(SaplingGenerator generator, AbstractBlock.Settings settings) {
         return SaplingBlockInvoker.invokeCtor(new BetterBirchSaplingGenerator(), settings);
