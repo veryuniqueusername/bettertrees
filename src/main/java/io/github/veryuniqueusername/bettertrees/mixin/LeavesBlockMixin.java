@@ -2,6 +2,7 @@ package io.github.veryuniqueusername.bettertrees.mixin;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.block.LeavesBlock;
 import net.minecraft.entity.ai.pathing.NavigationType;
 import net.minecraft.item.ItemPlacementContext;
@@ -63,8 +64,7 @@ public class LeavesBlockMixin extends Block {
 		int i = getDistanceFromLog(neighborState) + 1;
 		if (i != 1 || state.get(DISTANCE) != i) {
 			world.createAndScheduleBlockTick(pos, this, 1);
-		}
-		else if (getExposed(world, neighborPos) && state.get(EXPOSED)) {
+		} else if (getExposed(world, neighborPos) && state.get(EXPOSED)) {
 			world.createAndScheduleBlockTick(pos, this, 1);
 		}
 		return state;
@@ -81,20 +81,28 @@ public class LeavesBlockMixin extends Block {
 		}
 		for (Direction direction: Direction.values()) {
 			mutable.set(pos, direction);
-			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock) && !world.getBlockState(mutable).isOpaque())
+			if (getSideExposed(world, mutable)) {
 				exposed = true;
+			}
 		}
 		return state.with(DISTANCE, i).with(EXPOSED, exposed);
 	}
 
-	private static Boolean getExposed(WorldAccess world, BlockPos pos) {
+	private static boolean getExposed(WorldAccess world, BlockPos pos) {
 		BlockPos.Mutable mutable = new BlockPos.Mutable();
 		for (Direction direction: Direction.values()) {
 			mutable.set(pos, direction);
-			if (!(world.getBlockState(mutable).getBlock() instanceof LeavesBlock) && !world.getBlockState(mutable).isOpaque())
+			if (getSideExposed(world, mutable)) {
 				return true;
+			}
 		}
 		return false;
+	}
+
+	private static boolean getSideExposed(WorldAccess world, BlockPos.Mutable mutable) {
+		BlockState blockState = world.getBlockState(mutable);
+		Block neighborBlock = world.getBlockState(mutable).getBlock();
+		return (!(neighborBlock instanceof LeavesBlock) && !blockState.isOpaque()) || blockState.isOf(Blocks.SNOW);
 	}
 
 	private static int getDistanceFromLog(BlockState state) {
