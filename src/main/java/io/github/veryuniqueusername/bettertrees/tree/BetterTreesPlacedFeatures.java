@@ -148,17 +148,17 @@ public class BetterTreesPlacedFeatures {
 
 	public static final PlacedFeature BETTER_SNOWY_SPRUCE_TREES = BetterTreesConfiguredFeatures.TREE_BETTER_SPRUCE.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(0, 0.1f, 1)));
 
-	public static final PlacedFeature BETTER_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(100, 0.1f, 1)));
+	public static final PlacedFeature BETTER_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
 
-	public static final PlacedFeature BETTER_SNOWY_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(100, 0.1f, 1)));
+	public static final PlacedFeature BETTER_SNOWY_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
 
 	public static final PlacedFeature BETTER_SNOWY_PLAINS_TREES = BetterTreesConfiguredFeatures.BETTER_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(1, 0.1f, 1)));
 
 	public static final PlacedFeature BETTER_GROVE_TREES = BetterTreesConfiguredFeatures.BETTER_GROVE_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
 
-	public static final PlacedFeature BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(100, 0.1f, 1)));
+	public static final PlacedFeature BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
 
-	public static final PlacedFeature BETTER_OLD_GROWTH_PINE_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_OLD_GROWTH_PINE_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(100, 0.1f, 1)));
+	public static final PlacedFeature BETTER_OLD_GROWTH_PINE_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_OLD_GROWTH_PINE_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
 
 	public static Identifier identify(String path) {
 		return new Identifier(MOD_ID, path);

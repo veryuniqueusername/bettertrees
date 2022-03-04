@@ -33,19 +33,18 @@ public class BetterPineTrunkPlacer extends TrunkPlacer {
 
 	@Override
 	public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
-		rootPos = startPos;
 		setToDirt(world, replacer, random, startPos.down(), config);
 
 		Direction trunkBendDirection = Direction.byId(random.nextInt(2, 6));
 		Branch trunk = new Branch(world, replacer, random, height, startPos, config, Direction.UP, trunkBendDirection, 0, 1, 0d, 0d, false);
 
 		// roots
-//		for (int i = 0; i < 4; ++i) {
-//			Direction dir = Direction.byId(i + 2);
-//			if (random.nextDouble() < 0.7D) {
-//				getAndSetState(world, replacer, random, rootPos.offset(dir), config, blockState -> blockState.with(PillarBlock.AXIS, dir.getAxis()));
-//			}
-//		}
+		//		for (int i = 0; i < 4; ++i) {
+		//			Direction dir = Direction.byId(i + 2);
+		//			if (random.nextDouble() < 0.7D) {
+		//				getAndSetState(world, replacer, random, rootPos.offset(dir), config, blockState -> blockState.with(PillarBlock.AXIS, dir.getAxis()));
+		//			}
+		//		}
 
 		return trunk.generate();
 	}
@@ -106,28 +105,29 @@ public class BetterPineTrunkPlacer extends TrunkPlacer {
 				} else {
 					setLog(startPos, direction);
 				}
-					setLog(currentPos, direction);
+				setLog(currentPos, direction);
 
 				// PLACE LEAVES
 				if (i == length - 1) {
-					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 1, false));
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 0, false));
 				}
 
 				// BRANCHES
-				if (level == 0 && i > length - 7) {
+				if (level == 0 && i > length - 8) {
 					for (int dir = 0; dir < 4; ++dir) {
-						if (random.nextDouble() < 0.5d) {
-							int newLength = random.nextInt(0, 2) + (length - i) / 2;
-							Direction newDirection = Direction.byId(dir + 2);
-							Direction newBendDirection;
-							newBendDirection = switch (newDirection) {
-								case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST : Direction.WEST;
-								case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH : Direction.SOUTH;
-								default -> throw new IllegalStateException("Unexpected value at newBendDirection: " + newDirection);
-							};
-							Branch branch = new Branch(world, replacer, random, newLength, currentPos, config, newDirection, newBendDirection, level + 1, maxLevel, random.nextDouble(), 0, false);
-							list.addAll(branch.generate());
+						int newLength = random.nextInt(0, 2) + 1;
+						if (i >= length - 2) {
+							newLength = Math.max(newLength - length - i, 0);
 						}
+						Direction newDirection = Direction.byId(dir + 2);
+						Direction newBendDirection;
+						newBendDirection = switch (newDirection) {
+							case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST : Direction.WEST;
+							case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH : Direction.SOUTH;
+							default -> throw new IllegalStateException("Unexpected value at newBendDirection: " + newDirection);
+						};
+						Branch branch = new Branch(world, replacer, random, newLength, currentPos, config, newDirection, newBendDirection, level + 1, maxLevel, random.nextDouble(), 0, false);
+						list.addAll(branch.generate());
 					}
 				}
 			}
@@ -152,10 +152,6 @@ public class BetterPineTrunkPlacer extends TrunkPlacer {
 
 		private void setLog(BlockPos pos, Direction.Axis axis) {
 			getAndSetState(world, replacer, random, pos, config, blockState -> blockState.with(PillarBlock.AXIS, axis));
-		}
-
-		private double gaussian(double x, double a, double b, double c) {
-			return a * Math.exp(-((Math.pow(x - b, 2)) / (2 * Math.pow(c, 2))));
 		}
 	}
 }
