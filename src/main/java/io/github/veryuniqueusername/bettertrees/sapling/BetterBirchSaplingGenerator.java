@@ -1,6 +1,6 @@
 package io.github.veryuniqueusername.bettertrees.sapling;
 
-import io.github.veryuniqueusername.bettertrees.tree.BetterTreesConfiguredFeatures;
+import io.github.veryuniqueusername.bettertrees.BetterTreesConfiguredFeatures;
 import net.minecraft.block.sapling.SaplingGenerator;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.TreeFeatureConfig;

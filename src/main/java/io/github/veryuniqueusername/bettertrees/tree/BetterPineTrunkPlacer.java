@@ -2,6 +2,7 @@ package io.github.veryuniqueusername.bettertrees.tree;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.veryuniqueusername.bettertrees.BetterTreesConfiguredFeatures;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PillarBlock;
 import net.minecraft.util.math.BlockPos;

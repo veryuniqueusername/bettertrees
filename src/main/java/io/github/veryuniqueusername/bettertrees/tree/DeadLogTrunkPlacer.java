@@ -3,6 +3,7 @@ package io.github.veryuniqueusername.bettertrees.tree;
 import com.google.common.collect.ImmutableList;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.veryuniqueusername.bettertrees.BetterTreesConfiguredFeatures;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;

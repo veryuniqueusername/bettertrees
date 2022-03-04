@@ -1,6 +1,7 @@
-package io.github.veryuniqueusername.bettertrees.tree;
+package io.github.veryuniqueusername.bettertrees;
 
 import com.google.common.collect.ImmutableList;
+import io.github.veryuniqueusername.bettertrees.BetterTreesConfiguredFeatures;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;

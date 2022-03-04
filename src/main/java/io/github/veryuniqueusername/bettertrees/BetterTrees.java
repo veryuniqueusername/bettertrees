@@ -1,8 +1,6 @@
 package io.github.veryuniqueusername.bettertrees;
 
 
-import io.github.veryuniqueusername.bettertrees.tree.BetterTreesConfiguredFeatures;
-import io.github.veryuniqueusername.bettertrees.tree.BetterTreesPlacedFeatures;
 import net.fabricmc.api.ModInitializer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

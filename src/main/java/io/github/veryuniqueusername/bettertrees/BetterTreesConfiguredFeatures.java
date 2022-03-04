@@ -1,8 +1,11 @@
-package io.github.veryuniqueusername.bettertrees.tree;
+package io.github.veryuniqueusername.bettertrees;
 
 import com.google.common.collect.ImmutableList;
+import io.github.veryuniqueusername.bettertrees.foliage.CircleFoliagePlacer;
+import io.github.veryuniqueusername.bettertrees.mixin.FoliagePlacerTypeInvoker;
 import io.github.veryuniqueusername.bettertrees.mixin.SimpleBlockStateProviderInvoker;
 import io.github.veryuniqueusername.bettertrees.mixin.TrunkPlacerTypeInvoker;
+import io.github.veryuniqueusername.bettertrees.tree.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
@@ -28,6 +31,8 @@ import static io.github.veryuniqueusername.bettertrees.BetterTrees.MOD_ID;
 
 
 public class BetterTreesConfiguredFeatures {
+	public static final FoliagePlacerType<CircleFoliagePlacer> CIRCLE_FOLIAGE_PLACER = FoliagePlacerTypeInvoker.callRegister("circle_foliage_placer", CircleFoliagePlacer.CODEC);
+
 	public static final TrunkPlacerType<DeadLogTrunkPlacer> DEAD_LOG_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("dead_log_trunk_placer", DeadLogTrunkPlacer.CODEC);
 
 	public static final TrunkPlacerType<BetterOakTrunkPlacer> BETTER_OAK_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_oak_trunk_placer", BetterOakTrunkPlacer.CODEC);
@@ -332,7 +337,7 @@ public class BetterTreesConfiguredFeatures {
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.SPRUCE_WOOD.getDefaultState()),
 			new BetterSpruceTrunkPlacer(12, 3, 0),
 			SimpleBlockStateProviderInvoker.invokeCtor((Blocks.SPRUCE_LEAVES).getDefaultState()),
-			new AcaciaFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0)),
+			new CircleFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0)),
 			new TwoLayersFeatureSize(2, 0, 4)
 		);
 	}

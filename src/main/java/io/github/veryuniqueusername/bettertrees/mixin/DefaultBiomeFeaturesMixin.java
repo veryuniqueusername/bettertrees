@@ -1,6 +1,6 @@
 package io.github.veryuniqueusername.bettertrees.mixin;
 
-import io.github.veryuniqueusername.bettertrees.tree.BetterTreesPlacedFeatures;
+import io.github.veryuniqueusername.bettertrees.BetterTreesPlacedFeatures;
 import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.feature.DefaultBiomeFeatures;

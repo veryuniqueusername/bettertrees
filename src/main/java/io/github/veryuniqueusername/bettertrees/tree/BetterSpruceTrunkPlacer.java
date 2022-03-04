@@ -2,6 +2,7 @@ package io.github.veryuniqueusername.bettertrees.tree;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.github.veryuniqueusername.bettertrees.BetterTreesConfiguredFeatures;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PillarBlock;
 import net.minecraft.util.math.BlockPos;
@@ -97,11 +98,11 @@ public class BetterSpruceTrunkPlacer extends TrunkPlacer {
 				setLog(currentPos, direction);
 
 				if (level == 0 && (i % 2 == 0 || i == length - 1)) {
-					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 1 + (length - i) / 3, false));
+					list.add(new FoliagePlacer.TreeNode(currentPos, 1 + (length - i) / 3, false));
 				} else if (level == 0) {
-					list.add(new FoliagePlacer.TreeNode(currentPos.up(), Math.max((length - i) / 3 - 1, 0), false));
-				} else if (level == 1 && i == length - 1) {
-					list.add(new FoliagePlacer.TreeNode(currentPos.up(2), 1, false));
+					list.add(new FoliagePlacer.TreeNode(currentPos, Math.max((length - i) / 3 - 1, 0), false));
+				} else if (i == length - 1) {
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(1), 1, false));
 				}
 				// BRANCHES
 				if (level == 0 && i % 2 == 0) {
