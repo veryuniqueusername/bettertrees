@@ -101,7 +101,11 @@ public class BetterSpruceTrunkPlacer extends TrunkPlacer {
 					list.add(new FoliagePlacer.TreeNode(currentPos, 1 + (length - i) / 3, false));
 				} else if (level == 0) {
 					list.add(new FoliagePlacer.TreeNode(currentPos, Math.max((length - i) / 3 - 1, 0), false));
-				} else if (i == length - 1) {
+				}
+				if (level == 0 && i == length - 1) {
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(0), 1, false));
+				}
+				else if (level == 1) {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(1), 1, false));
 				}
 				// BRANCHES

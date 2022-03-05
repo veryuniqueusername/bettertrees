@@ -155,7 +155,7 @@ public class BetterTreesPlacedFeatures {
 
 	public static final PlacedFeature BETTER_SNOWY_PLAINS_TREES = BetterTreesConfiguredFeatures.BETTER_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(1, 0.1f, 1)));
 
-	public static final PlacedFeature BETTER_GROVE_TREES = BetterTreesConfiguredFeatures.BETTER_GROVE_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
+	public static final PlacedFeature BETTER_GROVE_TREES = BetterTreesConfiguredFeatures.BETTER_GROVE_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(100, 0.1f, 1)));
 
 	public static final PlacedFeature BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
 

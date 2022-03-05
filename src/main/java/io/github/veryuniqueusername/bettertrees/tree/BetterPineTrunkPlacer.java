@@ -19,8 +19,6 @@ import java.util.Random;
 import java.util.function.BiConsumer;
 
 public class BetterPineTrunkPlacer extends TrunkPlacer {
-	BlockPos rootPos;
-
 	public static final Codec<BetterPineTrunkPlacer> CODEC = RecordCodecBuilder.create(instance -> fillTrunkPlacerFields(instance).apply(instance, BetterPineTrunkPlacer::new));
 
 	public BetterPineTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
@@ -116,9 +114,9 @@ public class BetterPineTrunkPlacer extends TrunkPlacer {
 				// BRANCHES
 				if (level == 0 && i > length - 8) {
 					for (int dir = 0; dir < 4; ++dir) {
-						int newLength = random.nextInt(0, 2) + 1;
+						int newLength = random.nextInt(2) + 1;
 						if (i >= length - 2) {
-							newLength = Math.max(newLength - length - i, 0);
+							newLength = Math.max(newLength - length + i, 0);
 						}
 						Direction newDirection = Direction.byId(dir + 2);
 						Direction newBendDirection;

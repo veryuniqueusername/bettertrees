@@ -15,10 +15,12 @@ import java.util.Random;
 import java.util.function.BiConsumer;
 
 public class CircleFoliagePlacer extends FoliagePlacer {
-	public static final Codec<CircleFoliagePlacer> CODEC = RecordCodecBuilder.create(instance -> CircleFoliagePlacer.fillFoliagePlacerFields(instance).apply(instance, CircleFoliagePlacer::new));
+	public static final Codec<CircleFoliagePlacer> CODEC = RecordCodecBuilder.create(instance -> CircleFoliagePlacer.fillFoliagePlacerFields(instance).and((Codec.doubleRange(0, 1).fieldOf("chance")).forGetter(placer -> placer.chance)).apply(instance, CircleFoliagePlacer::new));
+	private final double chance;
 
-	public CircleFoliagePlacer(IntProvider radius, IntProvider offset) {
+	public CircleFoliagePlacer(IntProvider radius, IntProvider offset, double chance) {
 		super(radius, offset);
+		this.chance = chance;
 	}
 
 	@Override
@@ -31,7 +33,7 @@ public class CircleFoliagePlacer extends FoliagePlacer {
 	 */
 	@Override
 	protected void generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, int trunkHeight, TreeNode treeNode, int foliageHeight, int radius, int offset) {
-		for (int i = offset; i >= offset - foliageHeight ; --i) {
+		for (int i = offset; i >= offset - foliageHeight; --i) {
 			this.generateSquare(world, replacer, random, config, treeNode.getCenter(), radius + treeNode.getFoliageRadius(), i, treeNode.isGiantTrunk());
 		}
 	}
@@ -46,6 +48,9 @@ public class CircleFoliagePlacer extends FoliagePlacer {
 	 */
 	@Override
 	protected boolean isInvalidForLeaves(Random random, int dx, int y, int dz, int radius, boolean giantTrunk) {
+		if (random.nextDouble() > this.chance) {
+			return true;
+		}
 		return dx * dx + dz * dz > radius * radius;
 	}
 }

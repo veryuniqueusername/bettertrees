@@ -207,7 +207,7 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_TAIGA_TREES = Feature.RANDOM_SELECTOR.configure(
 		new RandomFeatureConfig(
 			List.of(
-				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_PINE, 0.3f)
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_PINE, 0.1f)
 			),
 			BetterTreesPlacedFeatures.TREE_BETTER_SPRUCE
 		)
@@ -216,7 +216,7 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_GROVE_TREES = Feature.RANDOM_SELECTOR.configure(
 		new RandomFeatureConfig(
 			List.of(
-				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_SNOWY_PINE, 0.7f)
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_SNOWY_PINE, 0.3f)
 			),
 			BetterTreesPlacedFeatures.TREE_BETTER_SNOWY_SPRUCE
 		)
@@ -327,17 +327,17 @@ public class BetterTreesConfiguredFeatures {
 		if (mega) {
 			return new TreeFeatureConfig.Builder(
 				SimpleBlockStateProviderInvoker.invokeCtor(Blocks.SPRUCE_WOOD.getDefaultState()),
-				new BetterMegaSpruceTrunkPlacer(20, 5, 3),
+				new BetterMegaSpruceTrunkPlacer(22, 5, 5),
 				SimpleBlockStateProviderInvoker.invokeCtor((Blocks.SPRUCE_LEAVES).getDefaultState()),
-				new AcaciaFoliagePlacer(BiasedToBottomIntProvider.create(1, 2), ConstantIntProvider.create(0)),
-				new TwoLayersFeatureSize(5, 0, 5)
+				new CircleFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0), 0.5d),
+				new TwoLayersFeatureSize(3, 0, 7)
 			);
 		}
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.SPRUCE_WOOD.getDefaultState()),
 			new BetterSpruceTrunkPlacer(12, 3, 0),
 			SimpleBlockStateProviderInvoker.invokeCtor((Blocks.SPRUCE_LEAVES).getDefaultState()),
-			new CircleFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0)),
+			new CircleFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0), 0.8d),
 			new TwoLayersFeatureSize(2, 0, 4)
 		);
 	}
@@ -346,18 +346,18 @@ public class BetterTreesConfiguredFeatures {
 		if (mega) {
 			return new TreeFeatureConfig.Builder(
 				SimpleBlockStateProviderInvoker.invokeCtor(Blocks.SPRUCE_WOOD.getDefaultState()),
-				new BetterMegaPineTrunkPlacer(32, 6, 3),
+				new BetterMegaPineTrunkPlacer(32, 10, 3),
 				SimpleBlockStateProviderInvoker.invokeCtor((Blocks.SPRUCE_LEAVES).getDefaultState()),
-				new AcaciaFoliagePlacer(BiasedToBottomIntProvider.create(1, 2), ConstantIntProvider.create(0)),
-				new TwoLayersFeatureSize(5, 0, 5)
+				new RandomSpreadFoliagePlacer(UniformIntProvider.create(2, 3), ConstantIntProvider.create(0), ConstantIntProvider.create(3), 40),
+				new TwoLayersFeatureSize(20, 0, 5)
 			);
 		}
 		return new TreeFeatureConfig.Builder(
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.SPRUCE_WOOD.getDefaultState()),
-			new BetterPineTrunkPlacer(16, 6, 3),
+			new BetterPineTrunkPlacer(20, 6, 3),
 			SimpleBlockStateProviderInvoker.invokeCtor((Blocks.SPRUCE_LEAVES).getDefaultState()),
 			new PineFoliagePlacer(UniformIntProvider.create(1, 2), ConstantIntProvider.create(0), ConstantIntProvider.create(2)),
-			new TwoLayersFeatureSize(5, 0, 3)
+			new TwoLayersFeatureSize(9, 0, 3)
 		);
 	}
 
