@@ -21,8 +21,6 @@ import java.util.function.BiConsumer;
 import static io.github.veryuniqueusername.bettertrees.BetterTrees.MOD_LOGGER;
 
 public class BetterMegaSpruceTrunkPlacer extends GiantTrunkPlacer {
-	private final double branchProbabilityModifier = 1.5D;
-
 	public static final Codec<BetterMegaSpruceTrunkPlacer> CODEC = RecordCodecBuilder.create(instance -> fillTrunkPlacerFields(instance).apply(instance, BetterMegaSpruceTrunkPlacer::new));
 
 	public BetterMegaSpruceTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
@@ -139,22 +137,28 @@ public class BetterMegaSpruceTrunkPlacer extends GiantTrunkPlacer {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(0, 2), false));
 					list.add(new FoliagePlacer.TreeNode(currentPos, random.nextInt(1, 3), false));
 					list.add(new FoliagePlacer.TreeNode(currentPos.down(), random.nextInt(0, 2), false));
-				} else if (level != 0 && i == (length - 1)) {
-					list.add(new FoliagePlacer.TreeNode(currentPos, 1, false));
+				} else if (i == (length - 1)) {
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 2, true));
 				}
-				list.add(new FoliagePlacer.TreeNode(currentPos.up(), 1, true));
 
+				// STOP GROWTH IF REACHED CIRCLE
+				int dx = currentPos.getX() - startPos.getX();
+				int dz = currentPos.getZ() - startPos.getZ();
+				if (dx * dx + dz * dz >= length * length) {
+					list.add(new FoliagePlacer.TreeNode(currentPos, 1, false));
+					break;
+				}
 
 				// BRANCHES
-				if (level == 0 && i > 1) {
+				if (level == 0 && i > 1 && i < length - 1) {
 					for (int j = 0; j < 8; j++) {
 						if (random.nextDouble() < 0.7d) {
-							int newLength = random.nextInt(2) + 1 + (length - i) / 6;
-							if (i < 4) {
-								newLength += 4 - i;
-							} else if (i >= length - 6) {
-								newLength = Math.max(newLength - (6 - ((length - i) / 6)), 0);
+							int newLength = length;
+							if (i < 6) {
+								newLength += (6 - i) * 2;
 							}
+							newLength -= 4 * i / 5;
+							newLength *= 0.2;
 							MOD_LOGGER.info("New branch length at i " + i + " of " + length + ": " + newLength);
 							Direction newDirection = Direction.byId(random.nextInt(4) + 2);
 							Direction newBendDirection;
@@ -170,7 +174,7 @@ public class BetterMegaSpruceTrunkPlacer extends GiantTrunkPlacer {
 					}
 				}
 				// SUB-BRANCHES
-				else if (level == 1 && random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier)) {
+				else if (level == 1 && random.nextDouble() < getBranchProbability(i, length)) {
 					int newLength = random.nextInt(1, 3);
 					Direction newDirection = Direction.byId(random.nextInt(4) + 2);
 					Direction newBendDirection;
@@ -235,10 +239,10 @@ public class BetterMegaSpruceTrunkPlacer extends GiantTrunkPlacer {
 			getAndSetState(world, replacer, random, pos, config, blockState -> blockState.with(PillarBlock.AXIS, axis));
 		}
 
-		private double getBranchProbability(int height, int maxHeight, double modifier) {
+		private double getBranchProbability(int height, int maxHeight) {
 			// NORMAL DISTRUBUTION
 			double normalizedHeight = (double) height / maxHeight;
-			return gaussian(normalizedHeight, modifier, 0.75D, 0.4D);
+			return gaussian(normalizedHeight, 3, 0.75D, 0.4D);
 		}
 
 		private double gaussian(double x, double a, double b, double c) {

@@ -32,7 +32,7 @@ public class CircleFoliagePlacer extends FoliagePlacer {
 	 * This is the main method used to generate foliage.
 	 */
 	@Override
-	protected void generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, int trunkHeight, TreeNode treeNode, int foliageHeight, int radius, int offset) {
+	protected void generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, int trunkHeight, FoliagePlacer.TreeNode treeNode, int foliageHeight, int radius, int offset) {
 		for (int i = offset; i >= offset - foliageHeight; --i) {
 			this.generateSquare(world, replacer, random, config, treeNode.getCenter(), radius + treeNode.getFoliageRadius(), i, treeNode.isGiantTrunk());
 		}
