@@ -160,7 +160,6 @@ public class BetterMegaSpruceTrunkPlacer extends GiantTrunkPlacer {
 							}
 							newLength -= 4 * i / 5;
 							newLength *= 0.2;
-							MOD_LOGGER.info("New branch length at i " + i + " of " + length + ": " + newLength);
 							Direction newDirection = Direction.byId(random.nextInt(4) + 2);
 							Direction newBendDirection;
 							newBendDirection = switch (newDirection) {

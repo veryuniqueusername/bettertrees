@@ -2,6 +2,7 @@ package io.github.veryuniqueusername.bettertrees;
 
 import com.google.common.collect.ImmutableList;
 import io.github.veryuniqueusername.bettertrees.foliage.CircleFoliagePlacer;
+import io.github.veryuniqueusername.bettertrees.foliage.SmallSpruceFoliagePlacer;
 import io.github.veryuniqueusername.bettertrees.mixin.FoliagePlacerTypeInvoker;
 import io.github.veryuniqueusername.bettertrees.mixin.SimpleBlockStateProviderInvoker;
 import io.github.veryuniqueusername.bettertrees.mixin.TrunkPlacerTypeInvoker;
@@ -32,6 +33,7 @@ import static io.github.veryuniqueusername.bettertrees.BetterTrees.MOD_ID;
 
 public class BetterTreesConfiguredFeatures {
 	public static final FoliagePlacerType<CircleFoliagePlacer> CIRCLE_FOLIAGE_PLACER = FoliagePlacerTypeInvoker.callRegister("circle_foliage_placer", CircleFoliagePlacer.CODEC);
+	public static final FoliagePlacerType<SmallSpruceFoliagePlacer> SMALL_SPRUCE_FOLIAGE_PLACER = FoliagePlacerTypeInvoker.callRegister("small_spruce_foliage_placer", SmallSpruceFoliagePlacer.CODEC);
 
 	public static final TrunkPlacerType<DeadLogTrunkPlacer> DEAD_LOG_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("dead_log_trunk_placer", DeadLogTrunkPlacer.CODEC);
 
@@ -348,6 +350,16 @@ public class BetterTreesConfiguredFeatures {
 		);
 	}
 
+	private static TreeFeatureConfig.Builder smallSpruceBuilder() {
+		return new TreeFeatureConfig.Builder(
+			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.SPRUCE_WOOD.getDefaultState()),
+			new BetterSmallSpruceTrunkPlacer(4, 0, 0),
+			SimpleBlockStateProviderInvoker.invokeCtor((Blocks.SPRUCE_LEAVES).getDefaultState()),
+			new SmallSpruceFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0)),
+			new TwoLayersFeatureSize(0, 0, 2)
+		);
+	}
+
 	private static TreeFeatureConfig.Builder spruceBuilder(boolean mega, boolean dead) {
 		if (mega) {
 			return new TreeFeatureConfig.Builder(
@@ -364,16 +376,6 @@ public class BetterTreesConfiguredFeatures {
 			SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.SPRUCE_LEAVES).getDefaultState()),
 			new CircleFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0), 0.8d),
 			new TwoLayersFeatureSize(2, 0, 4)
-		);
-	}
-
-	private static TreeFeatureConfig.Builder smallSpruceBuilder() {
-		return new TreeFeatureConfig.Builder(
-			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.SPRUCE_WOOD.getDefaultState()),
-			new BetterSmallSpruceTrunkPlacer(4, 0, 0),
-			SimpleBlockStateProviderInvoker.invokeCtor((Blocks.SPRUCE_LEAVES).getDefaultState()),
-			new CircleFoliagePlacer(ConstantIntProvider.create(0), ConstantIntProvider.create(0), 0.9d),
-			new TwoLayersFeatureSize(0, 0, 2)
 		);
 	}
 

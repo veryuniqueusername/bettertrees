@@ -77,12 +77,9 @@ public class BetterSmallSpruceTrunkPlacer extends TrunkPlacer {
 			BlockPos currentPos = startPos;
 			for (int i = 0; i < length; ++i) {
 				setLog(currentPos, direction);
-				switch (i) {
-					case 0, 2 -> list.add(new FoliagePlacer.TreeNode(currentPos, 2, false));
-					case 1, 3 -> list.add(new FoliagePlacer.TreeNode(currentPos, 1, false));
-				}
 				currentPos = currentPos.up();
 			}
+			list.add(new FoliagePlacer.TreeNode(currentPos.up(), 1, false));
 			return list;
 		}
 
