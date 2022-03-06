@@ -10,6 +10,7 @@ import io.github.veryuniqueusername.bettertrees.tree.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DataPool;
 import net.minecraft.util.math.intprovider.BiasedToBottomIntProvider;
 import net.minecraft.util.math.intprovider.ConstantIntProvider;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
@@ -19,6 +20,7 @@ import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.gen.feature.*;
 import net.minecraft.world.gen.feature.size.TwoLayersFeatureSize;
 import net.minecraft.world.gen.foliage.*;
+import net.minecraft.world.gen.stateprovider.WeightedBlockStateProvider;
 import net.minecraft.world.gen.treedecorator.BeehiveTreeDecorator;
 import net.minecraft.world.gen.treedecorator.CocoaBeansTreeDecorator;
 import net.minecraft.world.gen.treedecorator.LeavesVineTreeDecorator;
@@ -54,6 +56,9 @@ public class BetterTreesConfiguredFeatures {
 	public static final TrunkPlacerType<BetterAcaciaTrunkPlacer> BETTER_ACACIA_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_acacia_trunk_placer", BetterAcaciaTrunkPlacer.CODEC);
 
 	public static final TrunkPlacerType<BetterDarkOakTrunkPlacer> BETTER_DARK_OAK_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_dark_oak_trunk_placer", BetterDarkOakTrunkPlacer.CODEC);
+
+	public static final TrunkPlacerType<BetterAzaleaTrunkPlacer> BETTER_AZALEA_TRUNK_PLACER = TrunkPlacerTypeInvoker.callRegister("better_azalea_trunk_placer", BetterAzaleaTrunkPlacer.CODEC);
+
 
 	private static final BeehiveTreeDecorator BEES_RARE = new BeehiveTreeDecorator(0.002f);
 	private static final BeehiveTreeDecorator BEES_REGULAR = new BeehiveTreeDecorator(0.02f);
@@ -103,6 +108,9 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_DEAD_ACACIA = Feature.TREE.configure(acaciaBuilder(true).build());
 
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_DARK_OAK = Feature.TREE.configure(darkOakBuilder().build());
+
+	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_AZALEA = Feature.TREE.configure(azaleaBuilder().build());
+
 
 
 	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_BUSHES = Feature.RANDOM_SELECTOR.configure(
@@ -337,6 +345,8 @@ public class BetterTreesConfiguredFeatures {
 
 		registerConfiguredFeature("better_dark_oak", TREE_BETTER_DARK_OAK);
 
+		registerConfiguredFeature("better_azalea", TREE_BETTER_AZALEA);
+
 
 		registerConfiguredFeature("better_forest_trees", BETTER_FOREST_TREES);
 		registerConfiguredFeature("better_bushes", BETTER_BUSHES);
@@ -479,6 +489,17 @@ public class BetterTreesConfiguredFeatures {
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.DARK_OAK_LEAVES.getDefaultState()),
 			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(2, 4), ConstantIntProvider.create(0), BiasedToBottomIntProvider.create(2, 4), 60),
 			new TwoLayersFeatureSize(8, 1, 9)
+		);
+	}
+
+	private static TreeFeatureConfig.Builder azaleaBuilder() {
+		return new TreeFeatureConfig.Builder(
+			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.OAK_WOOD.getDefaultState()),
+			new BetterAzaleaTrunkPlacer(4, 2, 0),
+			// CASTING IS NECESSARY
+			new WeightedBlockStateProvider((DataPool.Builder)DataPool.builder().add(Blocks.AZALEA_LEAVES.getDefaultState(), 3).add(Blocks.FLOWERING_AZALEA_LEAVES.getDefaultState(), 1)),
+			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(2, 3), ConstantIntProvider.create(0), UniformIntProvider.create(2, 4), 80),
+			new TwoLayersFeatureSize(4, 0, 3)
 		);
 	}
 

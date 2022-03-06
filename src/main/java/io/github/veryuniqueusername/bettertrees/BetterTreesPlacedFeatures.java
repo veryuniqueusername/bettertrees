@@ -97,6 +97,9 @@ public class BetterTreesPlacedFeatures {
 
 	public static final PlacedFeature TREE_BETTER_DARK_OAK = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_DARK_OAK, ImmutableList.of(BlockFilterPlacementModifier.of(BlockPredicate.wouldSurvive(Blocks.DARK_OAK_SAPLING.getDefaultState(), BlockPos.ORIGIN))));
 
+	public static final PlacedFeature TREE_BETTER_AZALEA = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_AZALEA, ImmutableList.of(BlockFilterPlacementModifier.of(BlockPredicate.wouldSurvive(Blocks.AZALEA.getDefaultState(), BlockPos.ORIGIN))));
+
+
 
 	public static final PlacedFeature BETTER_BUSHES = BetterTreesConfiguredFeatures.BETTER_BUSHES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(20, 0.1f, 1)));
 
@@ -148,6 +151,7 @@ public class BetterTreesPlacedFeatures {
 	public static final PlacedFeature BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
 
 	public static final PlacedFeature BETTER_OLD_GROWTH_PINE_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_OLD_GROWTH_PINE_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
+
 
 	public static Identifier identify(String path) {
 		return new Identifier(MOD_ID, path);
@@ -203,6 +207,8 @@ public class BetterTreesPlacedFeatures {
 		registerPlacedFeature("dead_acacia", TREE_DEAD_ACACIA);
 
 		registerPlacedFeature("better_dark_oak", TREE_BETTER_DARK_OAK);
+
+		registerPlacedFeature("better_azalea", TREE_BETTER_AZALEA);
 
 
 		registerPlacedFeature("better_bushes", BETTER_BUSHES);

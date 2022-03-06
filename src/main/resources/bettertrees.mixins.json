@@ -4,6 +4,7 @@
   "package": "io.github.veryuniqueusername.bettertrees.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AzaleaBlockMixin",
     "BlocksMixin",
     "DefaultBiomeFeaturesMixin",
     "FoliagePlacerInvoker",
