@@ -139,6 +139,7 @@ public class BetterMegaSpruceTrunkPlacer extends GiantTrunkPlacer {
 					list.add(new FoliagePlacer.TreeNode(currentPos.down(), random.nextInt(0, 2), false));
 				} else if (i == (length - 1)) {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 2, true));
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 2, true));
 				}
 
 				// STOP GROWTH IF REACHED CIRCLE
