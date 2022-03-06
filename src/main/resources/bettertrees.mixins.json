@@ -5,12 +5,12 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "BlocksMixin",
-    "DefaultBiomeCreatorMixin",
     "DefaultBiomeFeaturesMixin",
     "FoliagePlacerInvoker",
     "FoliagePlacerTypeInvoker",
     "LargeOakFoliagePlacerMixin",
     "LeavesBlockMixin",
+    "OverworldBiomeCreatorMixin",
     "SaplingBlockInvoker",
     "SimpleBlockStateProviderInvoker",
     "TreeFeatureMixin",

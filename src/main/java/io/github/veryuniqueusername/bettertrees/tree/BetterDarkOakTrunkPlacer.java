@@ -126,26 +126,36 @@ public class BetterDarkOakTrunkPlacer extends GiantTrunkPlacer {
 			BlockPos currentPos = startPos;
 			double directionProbability = 2 - secondBendiness + (random.nextDouble() * 0.3);
 			for (int i = 0; i < length; ++i) {
+				int dx = currentPos.getX() - startPos.getX();
+				int dy = currentPos.getY() - startPos.getY();
+				int dz = currentPos.getZ() - startPos.getZ();
+				if (level != 0 && dx * dx + dy * dy + dz * dz >= length * length) {
+					i = length - 1;
+				}
+
 				if (level == 0) bendDirection = Direction.byId(random.nextInt(2, 6));
 				if (i < 2 && level == 0) currentPos = currentPos.up();
 				else if (level != 0) currentPos = newPos(currentPos, bendDirection, directionProbability);
 				else currentPos = newPos(currentPos, bendDirection);
 				BlockPos oppositeCurrentPos = currentPos.offset(direction.getOpposite(), 1);
 				if (level == 0) {
-					setTrunk(world, replacer, random, config, currentPos);
+					setTrunk(currentPos);
 				} else { // makes branches look more joined up
 					if (i > 0)
-						getAndSetState(world, replacer, random, oppositeCurrentPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+						setLog(oppositeCurrentPos, direction);
 					else
-						getAndSetState(world, replacer, random, startPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+						setLog(startPos, direction);
 					// set the block
-					getAndSetState(world, replacer, random, currentPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-				} // add foliage nodes
+					setLog(currentPos, direction);
+				}
+
+				// add foliage nodes
 				if (coveredWithLeaves) {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(2, 4), false));
 				} else if (level != 0 && i == (length - 1)) {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), 2, false));
 				}
+
 				// branches
 				if (level == 0) {
 					for (int dir = 0; dir < 4; dir++) {
@@ -168,7 +178,7 @@ public class BetterDarkOakTrunkPlacer extends GiantTrunkPlacer {
 				else {
 					for (int dir = 0; dir < 4; dir++) {
 						if (random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, noBranchesBelow, noBranchesAbove) && level == 1 && i > length - 3) {
-							int newLength = random.nextInt(2, 5);
+							int newLength = random.nextInt(2, 4);
 							Direction newDirection = Direction.byId(dir + 2);
 							if (directionProbability > 0.5d) {
 								newDirection = switch (dir) {
@@ -195,15 +205,15 @@ public class BetterDarkOakTrunkPlacer extends GiantTrunkPlacer {
 			return list;
 		}
 
-		private void setTrunk(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, TreeFeatureConfig config, BlockPos currentPos) {
-			getAndSetState(world, replacer, random, currentPos, config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, currentPos.east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, currentPos.south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, currentPos.east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, currentPos.down(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, currentPos.down().east(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, currentPos.down().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-			getAndSetState(world, replacer, random, currentPos.down().east().south(), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
+		private void setTrunk(BlockPos currentPos) {
+			setLog(currentPos, direction);
+			setLog(currentPos.east(), direction);
+			setLog(currentPos.south(), direction);
+			setLog(currentPos.east().south(), direction);
+			setLog(currentPos.down(), direction);
+			setLog(currentPos.down().east(), direction);
+			setLog(currentPos.down().south(), direction);
+			setLog(currentPos.down().east().south(), direction);
 		}
 
 		private BlockPos newPos(BlockPos currentPos, Direction bendDirection, double directionProbability) {
@@ -237,6 +247,14 @@ public class BetterDarkOakTrunkPlacer extends GiantTrunkPlacer {
 					break;
 			}
 			return branchPos;
+		}
+
+		private void setLog(BlockPos pos, Direction direction) {
+			setLog(pos, direction.getAxis());
+		}
+
+		private void setLog(BlockPos pos, Direction.Axis axis) {
+			getAndSetState(world, replacer, random, pos, config, blockState -> blockState.with(PillarBlock.AXIS, axis));
 		}
 
 		private double getBranchProbability(int height, int maxHeight, double modifier, int clampBelow, int clampAbove) {

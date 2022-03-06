@@ -102,8 +102,17 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_ACACIA = Feature.TREE.configure(acaciaBuilder(false).build());
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_DEAD_ACACIA = Feature.TREE.configure(acaciaBuilder(true).build());
 
-
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_DARK_OAK = Feature.TREE.configure(darkOakBuilder().build());
+
+
+	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_BUSHES = Feature.RANDOM_SELECTOR.configure(
+		new RandomFeatureConfig(
+			List.of(
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.UNDERGROWTH_BUSH, 1f)
+			),
+			BetterTreesPlacedFeatures.UNDERGROWTH_BUSH
+		)
+	);
 
 	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_FOREST_TREES = Feature.RANDOM_SELECTOR.configure(
 		new RandomFeatureConfig(
@@ -167,15 +176,21 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_JUNGLE_TREES = Feature.RANDOM_SELECTOR.configure(
 		new RandomFeatureConfig(
 			List.of(
-				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_OAK, 0.1f),
-				new RandomFeatureEntry(TreePlacedFeatures.JUNGLE_BUSH, 0.8f),
-				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_MEGA_JUNGLE, 0.7f),
 				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_SHORT_JUNGLE, 0.1f),
 				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_DEAD_JUNGLE, 0.015f),
-				new RandomFeatureEntry(BetterTreesPlacedFeatures.DEAD_JUNGLE_LOG, 0.05f)
-
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.DEAD_JUNGLE_LOG, 0.15f),
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_JUNGLE, 0.3f)
 			),
-			BetterTreesPlacedFeatures.TREE_BETTER_JUNGLE
+			BetterTreesPlacedFeatures.TREE_BETTER_MEGA_JUNGLE
+		)
+	);
+
+	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_JUNGLE_BUSHES = Feature.RANDOM_SELECTOR.configure(
+		new RandomFeatureConfig(
+			List.of(
+				new RandomFeatureEntry(TreePlacedFeatures.JUNGLE_BUSH, 1f)
+			),
+			TreePlacedFeatures.JUNGLE_BUSH
 		)
 	);
 
@@ -183,9 +198,8 @@ public class BetterTreesConfiguredFeatures {
 		new RandomFeatureConfig(
 			List.of(
 				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_OAK, 0.1f),
-				new RandomFeatureEntry(TreePlacedFeatures.JUNGLE_BUSH, 0.6f),
-				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_DEAD_JUNGLE, 0.003f),
-				new RandomFeatureEntry(BetterTreesPlacedFeatures.DEAD_JUNGLE_LOG, 0.005f)
+				new RandomFeatureEntry(TreePlacedFeatures.JUNGLE_BUSH, 0.7f),
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.DEAD_JUNGLE_LOG, 0.05f)
 			),
 			BetterTreesPlacedFeatures.TREE_SHORT_JUNGLE
 		)
@@ -325,11 +339,13 @@ public class BetterTreesConfiguredFeatures {
 
 
 		registerConfiguredFeature("better_forest_trees", BETTER_FOREST_TREES);
+		registerConfiguredFeature("better_bushes", BETTER_BUSHES);
 		registerConfiguredFeature("better_birch_forest_trees", BETTER_BIRCH_FOREST_TREES);
 		registerConfiguredFeature("better_tall_birch_forest_trees", BETTER_TALL_BIRCH_FOREST_TREES);
 		registerConfiguredFeature("better_dark_forest_vegetation_brown", BETTER_DARK_FOREST_VEGETATION_BROWN);
 		registerConfiguredFeature("better_bamboo_jungle_vegetation", BETTER_BAMBOO_JUNGLE_VEGETATION);
 		registerConfiguredFeature("better_jungle_trees", BETTER_JUNGLE_TREES);
+		registerConfiguredFeature("better_jungle_bushes", BETTER_JUNGLE_BUSHES);
 		registerConfiguredFeature("better_sparse_jungle_trees", BETTER_SPARSE_JUNGLE_TREES);
 		registerConfiguredFeature("better_savannah_trees", BETTER_SAVANNAH_TREES);
 
