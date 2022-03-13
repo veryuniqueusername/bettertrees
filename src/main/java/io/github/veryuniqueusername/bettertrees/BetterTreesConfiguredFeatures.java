@@ -112,7 +112,6 @@ public class BetterTreesConfiguredFeatures {
 	public static final ConfiguredFeature<TreeFeatureConfig, ?> TREE_BETTER_AZALEA = Feature.TREE.configure(azaleaBuilder().build());
 
 
-
 	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_BUSHES = Feature.RANDOM_SELECTOR.configure(
 		new RandomFeatureConfig(
 			List.of(
@@ -282,9 +281,17 @@ public class BetterTreesConfiguredFeatures {
 				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_DEAD_SPRUCE, 0.01f),
 				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_DEAD_PINE, 0.01f),
 				new RandomFeatureEntry(BetterTreesPlacedFeatures.DEAD_SPRUCE_LOG, 0.02f)
-
 			),
 			BetterTreesPlacedFeatures.TREE_BETTER_SPRUCE
+		)
+	);
+
+	public static final ConfiguredFeature<RandomFeatureConfig, ?> BETTER_MEADOW_TREES = Feature.RANDOM_SELECTOR.configure(
+		new RandomFeatureConfig(
+			List.of(
+				new RandomFeatureEntry(BetterTreesPlacedFeatures.TREE_BETTER_OAK_REGULAR_BEES, 0.5f)
+			),
+			BetterTreesPlacedFeatures.TREE_BETTER_BIRCH_REGULAR_BEES
 		)
 	);
 
@@ -364,6 +371,7 @@ public class BetterTreesConfiguredFeatures {
 		registerConfiguredFeature("better_grove_trees", BETTER_GROVE_TREES);
 		registerConfiguredFeature("better_old_growth_spruce_taiga_trees", BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES);
 		registerConfiguredFeature("better_old_growth_pine_taiga_trees", BETTER_OLD_GROWTH_PINE_TAIGA_TREES);
+		registerConfiguredFeature("better_meadow_trees", BETTER_MEADOW_TREES);
 	}
 
 	private static TreeFeatureConfig.Builder oakBuilder(boolean dead) {
@@ -497,7 +505,7 @@ public class BetterTreesConfiguredFeatures {
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.OAK_WOOD.getDefaultState()),
 			new BetterAzaleaTrunkPlacer(4, 2, 0),
 			// CASTING IS NECESSARY
-			new WeightedBlockStateProvider((DataPool.Builder)DataPool.builder().add(Blocks.AZALEA_LEAVES.getDefaultState(), 3).add(Blocks.FLOWERING_AZALEA_LEAVES.getDefaultState(), 1)),
+			new WeightedBlockStateProvider((DataPool.Builder) DataPool.builder().add(Blocks.AZALEA_LEAVES.getDefaultState(), 3).add(Blocks.FLOWERING_AZALEA_LEAVES.getDefaultState(), 1)),
 			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(2, 3), ConstantIntProvider.create(0), UniformIntProvider.create(2, 4), 80),
 			new TwoLayersFeatureSize(4, 0, 3)
 		);

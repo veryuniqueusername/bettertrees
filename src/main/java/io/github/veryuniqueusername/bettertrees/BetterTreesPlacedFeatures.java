@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import net.minecraft.block.Blocks;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -15,7 +14,7 @@ import net.minecraft.world.gen.feature.PlacedFeatures;
 import net.minecraft.world.gen.feature.VegetationPlacedFeatures;
 
 import static io.github.veryuniqueusername.bettertrees.BetterTrees.MOD_ID;
-import static net.minecraft.world.gen.feature.TreePlacedFeatures.ON_SNOW_PREDICATE;
+import static net.minecraft.world.gen.feature.TreePlacedFeatures.ON_SNOW_MODIFIERS;
 
 public class BetterTreesPlacedFeatures {
 	public static final PlacedFeature DEAD_OAK_LOG = new PlacedFeature(() -> BetterTreesConfiguredFeatures.DEAD_OAK_LOG, ImmutableList.of(BlockFilterPlacementModifier.of(BlockPredicate.wouldSurvive(Blocks.OAK_SAPLING.getDefaultState(), BlockPos.ORIGIN))));
@@ -59,9 +58,9 @@ public class BetterTreesPlacedFeatures {
 	public static final PlacedFeature TREE_DEAD_PINE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_DEAD_PINE, ImmutableList.of(BlockFilterPlacementModifier.of(BlockPredicate.wouldSurvive(Blocks.SPRUCE_SAPLING.getDefaultState(), BlockPos.ORIGIN))));
 
 
-	public static final PlacedFeature TREE_BETTER_SNOWY_SPRUCE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_SPRUCE, ImmutableList.of(BlockFilterPlacementModifier.of(BlockPredicate.wouldSurvive(Blocks.SPRUCE_SAPLING.getDefaultState(), BlockPos.ORIGIN)), EnvironmentScanPlacementModifier.of(Direction.UP, BlockPredicate.not(BlockPredicate.matchingBlock(Blocks.POWDER_SNOW, BlockPos.ORIGIN)), 8), BlockFilterPlacementModifier.of(ON_SNOW_PREDICATE)));
+	public static final PlacedFeature TREE_BETTER_SNOWY_SPRUCE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_SPRUCE, ON_SNOW_MODIFIERS);
 
-	public static final PlacedFeature TREE_BETTER_SNOWY_PINE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_PINE, ImmutableList.of(BlockFilterPlacementModifier.of(BlockPredicate.wouldSurvive(Blocks.SPRUCE_SAPLING.getDefaultState(), BlockPos.ORIGIN)), EnvironmentScanPlacementModifier.of(Direction.UP, BlockPredicate.not(BlockPredicate.matchingBlock(Blocks.POWDER_SNOW, BlockPos.ORIGIN)), 8), BlockFilterPlacementModifier.of(ON_SNOW_PREDICATE)));
+	public static final PlacedFeature TREE_BETTER_SNOWY_PINE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_PINE, ON_SNOW_MODIFIERS);
 
 	public static final PlacedFeature TREE_BETTER_MEGA_SPRUCE = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_MEGA_SPRUCE, ImmutableList.of(BlockFilterPlacementModifier.of(BlockPredicate.wouldSurvive(Blocks.SPRUCE_SAPLING.getDefaultState(), BlockPos.ORIGIN))));
 
@@ -98,7 +97,6 @@ public class BetterTreesPlacedFeatures {
 	public static final PlacedFeature TREE_BETTER_DARK_OAK = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_DARK_OAK, ImmutableList.of(BlockFilterPlacementModifier.of(BlockPredicate.wouldSurvive(Blocks.DARK_OAK_SAPLING.getDefaultState(), BlockPos.ORIGIN))));
 
 	public static final PlacedFeature TREE_BETTER_AZALEA = new PlacedFeature(() -> BetterTreesConfiguredFeatures.TREE_BETTER_AZALEA, ImmutableList.of(BlockFilterPlacementModifier.of(BlockPredicate.wouldSurvive(Blocks.AZALEA.getDefaultState(), BlockPos.ORIGIN))));
-
 
 
 	public static final PlacedFeature BETTER_BUSHES = BetterTreesConfiguredFeatures.BETTER_BUSHES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(20, 0.1f, 1)));
@@ -146,11 +144,13 @@ public class BetterTreesPlacedFeatures {
 
 	public static final PlacedFeature BETTER_SNOWY_PLAINS_TREES = BetterTreesConfiguredFeatures.BETTER_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(1, 0.1f, 1)));
 
-	public static final PlacedFeature BETTER_GROVE_TREES = BetterTreesConfiguredFeatures.BETTER_GROVE_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(100, 0.1f, 1)));
+	public static final PlacedFeature BETTER_GROVE_TREES = BetterTreesConfiguredFeatures.BETTER_GROVE_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(8, 0.1f, 1)));
 
 	public static final PlacedFeature BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
 
 	public static final PlacedFeature BETTER_OLD_GROWTH_PINE_TAIGA_TREES = BetterTreesConfiguredFeatures.BETTER_OLD_GROWTH_PINE_TAIGA_TREES.withPlacement(VegetationPlacedFeatures.modifiers(PlacedFeatures.createCountExtraModifier(10, 0.1f, 1)));
+
+	public static final PlacedFeature BETTER_MEADOW_TREES = BetterTreesConfiguredFeatures.BETTER_MEADOW_TREES.withPlacement(VegetationPlacedFeatures.modifiers(RarityFilterPlacementModifier.of(100)));
 
 
 	public static Identifier identify(String path) {
@@ -237,5 +237,6 @@ public class BetterTreesPlacedFeatures {
 		registerPlacedFeature("better_grove_trees", BETTER_GROVE_TREES);
 		registerPlacedFeature("better_old_growth_spruce_taiga_trees", BETTER_OLD_GROWTH_SPRUCE_TAIGA_TREES);
 		registerPlacedFeature("better_old_growth_pine_taiga_trees", BETTER_OLD_GROWTH_PINE_TAIGA_TREES);
+		registerPlacedFeature("better_meadow_trees", BETTER_MEADOW_TREES);
 	}
 }
