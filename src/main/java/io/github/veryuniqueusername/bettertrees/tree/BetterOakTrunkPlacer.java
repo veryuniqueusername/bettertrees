@@ -19,32 +19,11 @@ import java.util.Random;
 import java.util.function.BiConsumer;
 
 public class BetterOakTrunkPlacer extends TrunkPlacer {
-	private final int branchLengthModifier; // gets subtracted from the length of each new Branch (parent branch level > 0)
-	private final int initialBranchLengthModifier; // gets subtracted from the length of each new Branch generated off the trunk
-	private final double branchProbabilityModifier;
-	private final double subBranchProbabilityDivisor;
-	private final double minLeftBias;
-	private final double maxLeftBias;
-	private final double minUpBias;
-	private final double maxUpBias;
 
-	public static final Codec<BetterOakTrunkPlacer> CODEC = RecordCodecBuilder.create(instance ->
-		fillTrunkPlacerFields(instance).apply(instance, BetterOakTrunkPlacer::new));
+	public static final Codec<BetterOakTrunkPlacer> CODEC = RecordCodecBuilder.create(instance -> fillTrunkPlacerFields(instance).apply(instance, BetterOakTrunkPlacer::new));
 
 	public BetterOakTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
-		this(baseHeight, firstRandomHeight, secondRandomHeight, 2.50D, 3D, 2, 4, 0D, 1D, 0.6D, 1D);
-	}
-
-	public BetterOakTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight, double branchProbabilityModifier, double subBranchProbabilityDivisor, int branchLengthModifier, int initialBranchLengthModifier, double minLeftBias, double maxLeftBias, double minUpBias, double maxUpBias) {
 		super(baseHeight, firstRandomHeight, secondRandomHeight);
-		this.branchLengthModifier = branchLengthModifier;
-		this.initialBranchLengthModifier = initialBranchLengthModifier;
-		this.branchProbabilityModifier = branchProbabilityModifier;
-		this.subBranchProbabilityDivisor = subBranchProbabilityDivisor;
-		this.minLeftBias = minLeftBias;
-		this.maxLeftBias = maxLeftBias;
-		this.minUpBias = minUpBias;
-		this.maxUpBias = maxUpBias;
 	}
 
 	@Override
@@ -55,148 +34,158 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 	@Override
 	public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
 		setToDirt(world, replacer, random, startPos.down(), config);
-		// The trunk is a branch
-		Branch mainTrunk = new Branch(world, replacer, random, startPos, startPos, config, Direction.UP, height, 0, 4, 0d, 0d, 0.25d, false);
-		// generate roots
-		for (int i = 2; i < 6; ++i) {
-			if (random.nextDouble() < 0.5D) {
-				int finalI = i;
-				getAndSetState(world, replacer, random, startPos.offset(Direction.byId(i)), config, blockState -> blockState.with(PillarBlock.AXIS, Direction.byId(finalI).getAxis()));
+
+		// TRUNK
+		Direction trunkBendDirection = Direction.byId(random.nextInt(2, 6));
+		Branch trunk = new Branch(world, replacer, random, height, startPos, config, Direction.UP, trunkBendDirection, 0, 2, 0.8d, 0.4d, false);
+
+		// ROOTS
+		for (int i = 0; i < 4; ++i) {
+			Direction dir = Direction.byId(i + 2);
+			if (random.nextDouble() < 0.7D) {
+				getAndSetState(world, replacer, random, startPos.offset(dir), config, blockState -> blockState.with(PillarBlock.AXIS, dir.getAxis()));
 			}
 		}
+
 		// Also generates sub-branches recursively
-		return mainTrunk.generate();
+		return trunk.generate();
 	}
 
 	protected class Branch {
 		TestableWorld world;
 		BiConsumer<BlockPos, BlockState> replacer;
 		Random random;
+		int length;
 		BlockPos startPos;
-		BlockPos rootPos;
 		TreeFeatureConfig config;
 		Direction direction;
-
-		int clampBelow;
+		Direction bendDirection;
 		int level;
-		int length;
 		int maxLevel;
-		double leftBias;
-		double upBias;
-		double bendiness;
-		boolean nodesAllAlong;
+		double firstBendiness;
+		double secondBendiness;
+		boolean coveredWithLeaves;
 
-		int bendLeft = 0;
-		int bendUp = 0;
+		int noBranchesBelow;
+		int noBranchesAbove;
 
-		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, BlockPos startPos, BlockPos rootPos, TreeFeatureConfig config, Direction direction, int length, int level, int maxLevel, double leftBias, double upBias, double bendiness, boolean nodesAllAlong) {
+		public Branch(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int length, BlockPos startPos, TreeFeatureConfig config, Direction direction, Direction bendDirection, int level, int maxLevel, double firstBendiness, double secondBendiness, boolean coveredWithLeaves) {
 			this.world = world;
 			this.replacer = replacer;
 			this.random = random;
-			this.startPos = startPos;
-			this.rootPos = rootPos;
-			this.config = config;
 			this.length = length;
+			this.startPos = startPos;
+			this.config = config;
 			this.direction = direction;
+			this.bendDirection = bendDirection;
 			this.level = level;
 			this.maxLevel = maxLevel;
-			this.leftBias = leftBias;
-			if (this.direction.getAxis() == Direction.Axis.Y)
-				this.upBias = this.leftBias; // If the branch is generating up or down, all directions use the leftBias
-			else this.upBias = upBias;
-			this.bendiness = bendiness;
-			this.nodesAllAlong = nodesAllAlong;
+			this.firstBendiness = firstBendiness;
+			this.secondBendiness = secondBendiness;
+			this.coveredWithLeaves = coveredWithLeaves;
 
-			// Don't spawn branches below 5 blocks along the branch if the branch is level 0 (i.e. the trunk)
 			if (level == 0) {
-				this.clampBelow = 5;
+				this.noBranchesBelow = 3;
+				this.noBranchesAbove = 0;
 			} else {
-				this.clampBelow = 0;
+				this.noBranchesBelow = 0;
+				this.noBranchesAbove = 0;
 			}
 		}
 
 		public List<FoliagePlacer.TreeNode> generate() {
 			List<FoliagePlacer.TreeNode> list = new ArrayList<>();
+			BlockPos currentPos = startPos;
 			for (int i = 0; i < length; ++i) {
-				// makes branches look more joined up
-				if (i > 0)
-					getAndSetState(world, replacer, random, bendPos(startPos, i - 1), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-				// set the block
-				getAndSetState(world, replacer, random, bendPos(startPos, i), config, blockState -> blockState.with(PillarBlock.AXIS, direction.getAxis()));
-				// add foliage nodes
-				if (nodesAllAlong && (random.nextDouble() < 0.45 || i == length - 1) && i > length - 4)
-					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 0, false));
-				else if (i == (length - 1) && level == 0) // generate more leaves at the top of the trunk
-					list.add(new FoliagePlacer.TreeNode(bendPos(startPos, i).up(), 2, false));
-				updateBend();
-				// generates a sub-branch
-				if ((random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, clampBelow)) && (level < maxLevel)) {
-					int newLength = length - (random.nextInt(2) + 1);
-					if (level == 0) newLength = newLength - initialBranchLengthModifier;
-					else newLength = newLength - branchLengthModifier;
-					Direction newDirection = chooseFromAllowedDirections();
-					BlockPos newEndPos = bendPos(startPos, i).offset(newDirection, newLength);
-					int newBranchHeight = newEndPos.getY() - rootPos.getY();
-					if (newLength > 0 && (newEndPos.getManhattanDistance(rootPos) < (16 + newBranchHeight / 2))) { // restrict distance branches can be from the trunk
-						Branch branch = new Branch(world, replacer, random, bendPos(startPos, i), rootPos, config, newDirection, newLength, level + 1, maxLevel, getDoubleInRange(minLeftBias, maxLeftBias), getDoubleInRange(minUpBias, maxUpBias), (0.6 * random.nextDouble()) + 0, true);
-						list.addAll(branch.generate());
+				if (level == 0) bendDirection = Direction.byId(random.nextInt(2, 6));
+
+				currentPos = newPos(currentPos, bendDirection);
+				BlockPos oppositeCurrentPos = currentPos.offset(direction.getOpposite(), 1);
+
+				// PLACE LOGS
+				if (i > 0) {
+					setLog(oppositeCurrentPos, direction);
+				} else {
+					setLog(startPos, direction);
+				}
+				setLog(currentPos, direction);
+
+				// PLACE LEAVES
+				if (coveredWithLeaves) {
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(1, 2), false));
+				} else if (level == 2 && i == length - 1) {
+					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(1, 2), false));
+				}
+
+				// BRANCHES
+				if (level == 0) {
+					for (int j = 0; j < 2; ++j) {
+						if (random.nextDouble() < getBranchProbability(i, length, noBranchesBelow, noBranchesAbove)) {
+							int newLength = random.nextInt(2, 5);
+							Direction newDirection = Direction.byId(random.nextInt(2, 6));
+							Direction newBendDirection;
+							newBendDirection = switch (newDirection) {
+								case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST : Direction.WEST;
+								case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH : Direction.SOUTH;
+								case UP -> Direction.byId(random.nextInt(2, 6));
+								default -> throw new IllegalStateException("Unexpected value: " + newDirection);
+							};
+							Branch branch = new Branch(world, replacer, random, newLength, currentPos, config, newDirection, newBendDirection, level + 1, maxLevel, random.nextDouble(), (0.5 * random.nextDouble() + 0.2), false);
+							list.addAll(branch.generate());
+						}
+					}
+				}
+				// SUB-BRANCHES
+				else if (level == 1) {
+					for (int j = 0; j < 2; ++j) {
+						if (random.nextDouble() < 0.5d) {
+							int newLength = random.nextInt(1, 3);
+							Direction newDirection = Direction.byId(random.nextInt(6));
+							Direction newBendDirection;
+							newBendDirection = switch (newDirection) {
+								case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST : Direction.WEST;
+								case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH : Direction.SOUTH;
+								case UP, DOWN -> Direction.byId(random.nextInt(2, 6));
+							};
+							Branch branch = new Branch(world, replacer, random, newLength, currentPos, config, newDirection, newBendDirection, level + 1, maxLevel, random.nextDouble(), (0.6 * random.nextDouble() + 0.5), false);
+							list.addAll(branch.generate());
+						}
 					}
 				}
 			}
 			return list;
 		}
 
-		private void updateBend() {
-			if (random.nextDouble() < bendiness) {
-				if (random.nextDouble() < leftBias) bendLeft++;
-				else bendLeft--;
-			}
-			if (random.nextDouble() < bendiness) {
-				if (random.nextDouble() < upBias) bendUp++;
-				else bendUp--;
-			}
+		private BlockPos newPos(BlockPos currentPos, Direction bendDirection, double directionProbability) {
+			return currentPos.offset(this.direction, random.nextDouble() < directionProbability ? 1 : 0).offset(bendDirection, (random.nextDouble() < firstBendiness && random.nextDouble() < directionProbability) ? 1 : 0).offset(switch (direction) {
+				case NORTH, SOUTH, EAST, WEST -> Direction.UP;
+				case UP -> Direction.byId(random.nextInt(4) + 2);
+				case DOWN -> Direction.NORTH;
+			}, random.nextDouble() < secondBendiness ? 1 : 0);
 		}
 
-		private Direction chooseFromAllowedDirections() {
-			return Direction.byId(random.nextInt(5) + 1);
+		private BlockPos newPos(BlockPos currentPos, Direction bendDirection) {
+			return newPos(currentPos, bendDirection, 1d);
 		}
 
-		private BlockPos bendPos(BlockPos startPos, int i, Direction direction) {
-			return startPos.offset(direction, i).offset(
-				switch (direction) {
-					case NORTH, DOWN -> Direction.WEST;
-					case EAST -> Direction.NORTH;
-					case SOUTH, UP -> Direction.EAST;
-					case WEST -> Direction.SOUTH;
-				}, bendLeft
-			).offset(
-				switch (direction) {
-					case NORTH, SOUTH, EAST, WEST -> Direction.UP;
-					case UP -> Direction.SOUTH;
-					case DOWN -> Direction.NORTH;
-				}, bendUp
-			);
+		private void setLog(BlockPos pos, Direction direction) {
+			setLog(pos, direction.getAxis());
 		}
 
-		private BlockPos bendPos(BlockPos startPos, int i) {
-			return bendPos(startPos, i, this.direction);
+		private void setLog(BlockPos pos, Direction.Axis axis) {
+			getAndSetState(world, replacer, random, pos, config, blockState -> blockState.with(PillarBlock.AXIS, axis));
 		}
 
-		private double getBranchProbability(int height, int maxHeight, double modifier, int clampBelow) {
-			// Get the probability of a branch generating at a particular point along the branch. If the branch is level 0, uses a normal distribution, else just uses half the branch probability modifier
-			if (height < clampBelow) return 0D;
-			if (this.level == 0) {
-				double normalizedHeight = (double) height / maxHeight;
-				return gaussian(normalizedHeight, modifier, 0.75D, 0.2D);
-			} else return modifier / subBranchProbabilityDivisor;
+		private double getBranchProbability(int height, int maxHeight, int clampBelow, int clampAbove) {
+			// Get the probability of a branch generating at a particular point along the branch. Uses a normal distribution.
+			if (height < clampBelow || height > maxHeight - clampAbove) return 0D;
+
+			double normalizedHeight = (double) height / maxHeight;
+			return gaussian(normalizedHeight, 2, 0.75D, 0.4D);
 		}
 
-		private double gaussian(double x, double a, double b, double c) {
-			return a * Math.exp(-((Math.pow(x - b, 2)) / (2 * Math.pow(c, 2))));
-		}
-
-		private double getDoubleInRange(double min, double max) {
-			return ((max - min) * random.nextDouble()) + min;
+		private double gaussian(double x, double multiplier, double b, double c) {
+			return multiplier * Math.exp(-((Math.pow(x - b, 2)) / (2 * Math.pow(c, 2))));
 		}
 	}
 }

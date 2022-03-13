@@ -21,7 +21,7 @@ public class DeadLogTrunkPlacer extends BetterOakTrunkPlacer {
             fillTrunkPlacerFields(instance).apply(instance, DeadLogTrunkPlacer::new));
 
     public DeadLogTrunkPlacer(int baseHeight, int firstRandomHeight, int secondRandomHeight) {
-        super(baseHeight, firstRandomHeight, secondRandomHeight, 0.25D, 2D, 2, 6, 0D, 1D, 0D, 1D);
+        super(baseHeight, firstRandomHeight, secondRandomHeight);
     }
 
     @Override
@@ -32,7 +32,7 @@ public class DeadLogTrunkPlacer extends BetterOakTrunkPlacer {
     public List<FoliagePlacer.TreeNode> generate(TestableWorld world, BiConsumer<BlockPos, BlockState> replacer, Random random, int height, BlockPos startPos, TreeFeatureConfig config) {
         int directionId = random.nextInt(5) + 2;
         Direction direction = Direction.byId(directionId);
-        Branch deadLog = new Branch(world, replacer, random, startPos, startPos, config, direction, height, 0, 1, 0D, 0D, 0.1D, false);
+        Branch deadLog = new Branch(world, replacer, random, height, startPos, config, direction, direction, 0, 0, 0d, 0d, false);
         deadLog.generate();
         return ImmutableList.of();
     }

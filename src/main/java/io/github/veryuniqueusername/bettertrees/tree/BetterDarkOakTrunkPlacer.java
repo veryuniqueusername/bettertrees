@@ -159,7 +159,7 @@ public class BetterDarkOakTrunkPlacer extends GiantTrunkPlacer {
 				// branches
 				if (level == 0) {
 					for (int dir = 0; dir < 4; dir++) {
-						if (random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, noBranchesBelow, noBranchesAbove) || i > length - 2) {
+						if (random.nextDouble() < getBranchProbability(i, length, noBranchesBelow, noBranchesAbove) || i > length - 2) {
 							int newLength = random.nextInt(3) + length - (i / 2) - 4;
 							Direction newDirection = Direction.byId(dir + 2);
 							Direction newBendDirection;
@@ -177,7 +177,7 @@ public class BetterDarkOakTrunkPlacer extends GiantTrunkPlacer {
 				// subbranches
 				else {
 					for (int dir = 0; dir < 4; dir++) {
-						if (random.nextDouble() < getBranchProbability(i, length, branchProbabilityModifier, noBranchesBelow, noBranchesAbove) && level == 1 && i > length - 3) {
+						if (random.nextDouble() < getBranchProbability(i, length, noBranchesBelow, noBranchesAbove) && level == 1 && i > length - 3) {
 							int newLength = random.nextInt(2, 4);
 							Direction newDirection = Direction.byId(dir + 2);
 							if (directionProbability > 0.5d) {
@@ -257,13 +257,13 @@ public class BetterDarkOakTrunkPlacer extends GiantTrunkPlacer {
 			getAndSetState(world, replacer, random, pos, config, blockState -> blockState.with(PillarBlock.AXIS, axis));
 		}
 
-		private double getBranchProbability(int height, int maxHeight, double modifier, int clampBelow, int clampAbove) {
+		private double getBranchProbability(int height, int maxHeight, int clampBelow, int clampAbove) {
 			// Get the probability of a branch generating at a particular point along the branch. If the branch is level 0, uses a normal distribution, else just uses half the branch probability modifier
 			if (height < clampBelow || height > maxHeight - clampAbove) return 0D;
 			if (this.level == 0) {
 				double normalizedHeight = (double) height / maxHeight;
-				return gaussian(normalizedHeight, modifier, 0.75D, 0.4D);
-			} else return modifier / 0.2d;
+				return gaussian(normalizedHeight, 1.2, 0.75D, 0.4D);
+			} else return 1.2 / 0.2d;
 		}
 
 		private double gaussian(double x, double a, double b, double c) {
