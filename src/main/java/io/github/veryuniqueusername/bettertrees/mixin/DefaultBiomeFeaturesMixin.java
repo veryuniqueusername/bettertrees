@@ -97,7 +97,7 @@ public class DefaultBiomeFeaturesMixin {
 		return instance.feature(featureStep, BetterTreesPlacedFeatures.BETTER_WINDSWEPT_FOREST_TREES);
 	}
 
-	@Redirect(method = "addMeadowFlowers", at = @At(value = "INVOKE", target = "net/minecraft/world/biome/GenerationSettings$Builder.feature (Lnet/minecraft/world/gen/GenerationStep$Feature;Lnet/minecraft/world/gen/feature/PlacedFeature;)Lnet/minecraft/world/biome/GenerationSettings$Builder;"))
+	@Redirect(method = "addMeadowFlowers", at = @At(value = "INVOKE", target = "net/minecraft/world/biome/GenerationSettings$Builder.feature (Lnet/minecraft/world/gen/GenerationStep$Feature;Lnet/minecraft/world/gen/feature/PlacedFeature;)Lnet/minecraft/world/biome/GenerationSettings$Builder;", ordinal = 2))
 	private static GenerationSettings.Builder addBetterMeadowTrees(GenerationSettings.Builder instance, GenerationStep.Feature featureStep, PlacedFeature feature) {
 		return instance.feature(featureStep, BetterTreesPlacedFeatures.BETTER_MEADOW_TREES);
 	}

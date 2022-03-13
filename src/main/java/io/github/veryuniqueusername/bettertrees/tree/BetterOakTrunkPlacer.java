@@ -85,7 +85,7 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 			this.coveredWithLeaves = coveredWithLeaves;
 
 			if (level == 0) {
-				this.noBranchesBelow = 3;
+				this.noBranchesBelow = 4;
 				this.noBranchesAbove = 0;
 			} else {
 				this.noBranchesBelow = 0;
@@ -118,10 +118,10 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 				}
 
 				// BRANCHES
-				if (level == 0) {
+				if (level == 0 && level < maxLevel) {
 					for (int j = 0; j < 2; ++j) {
 						if (random.nextDouble() < getBranchProbability(i, length, noBranchesBelow, noBranchesAbove)) {
-							int newLength = random.nextInt(2, 5);
+							int newLength = random.nextInt(2, 4);
 							Direction newDirection = Direction.byId(random.nextInt(2, 6));
 							Direction newBendDirection;
 							newBendDirection = switch (newDirection) {
@@ -140,14 +140,14 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 					for (int j = 0; j < 2; ++j) {
 						if (random.nextDouble() < 0.5d) {
 							int newLength = random.nextInt(1, 3);
-							Direction newDirection = Direction.byId(random.nextInt(6));
+							Direction newDirection = Direction.byId(random.nextInt(1, 6));
 							Direction newBendDirection;
 							newBendDirection = switch (newDirection) {
 								case NORTH, SOUTH -> random.nextDouble() < 0.5 ? Direction.EAST : Direction.WEST;
 								case WEST, EAST -> random.nextDouble() < 0.5 ? Direction.NORTH : Direction.SOUTH;
 								case UP, DOWN -> Direction.byId(random.nextInt(2, 6));
 							};
-							Branch branch = new Branch(world, replacer, random, newLength, currentPos, config, newDirection, newBendDirection, level + 1, maxLevel, random.nextDouble(), (0.6 * random.nextDouble() + 0.5), false);
+							Branch branch = new Branch(world, replacer, random, newLength, currentPos, config, newDirection, newBendDirection, level + 1, maxLevel, random.nextDouble(), (0.6 * random.nextDouble() + 0.5), true);
 							list.addAll(branch.generate());
 						}
 					}
