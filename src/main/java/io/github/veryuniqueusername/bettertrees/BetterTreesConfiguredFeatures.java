@@ -32,6 +32,7 @@ import java.util.List;
 
 import static io.github.veryuniqueusername.bettertrees.BetterTrees.MOD_ID;
 
+
 public class BetterTreesConfiguredFeatures {
 	public static final FoliagePlacerType<CircleFoliagePlacer> CIRCLE_FOLIAGE_PLACER = FoliagePlacerTypeInvoker.callRegister("circle_foliage_placer", CircleFoliagePlacer.CODEC);
 	public static final FoliagePlacerType<SmallSpruceFoliagePlacer> SMALL_SPRUCE_FOLIAGE_PLACER = FoliagePlacerTypeInvoker.callRegister("small_spruce_foliage_placer", SmallSpruceFoliagePlacer.CODEC);

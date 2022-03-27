@@ -7,7 +7,6 @@
     "AzaleaBlockMixin",
     "BlocksMixin",
     "DefaultBiomeFeaturesMixin",
-    "FarmlandBlockMixin",
     "FoliagePlacerInvoker",
     "FoliagePlacerTypeInvoker",
     "LargeOakFoliagePlacerMixin",
