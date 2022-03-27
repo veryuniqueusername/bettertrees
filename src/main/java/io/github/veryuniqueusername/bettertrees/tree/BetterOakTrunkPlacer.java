@@ -99,7 +99,11 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 			for (int i = 0; i < length; ++i) {
 				if (level == 0) bendDirection = Direction.byId(random.nextInt(2, 6));
 
-				currentPos = newPos(currentPos, bendDirection);
+				if (level == 0 && i < 2) {
+					currentPos = currentPos.up();
+				} else {
+					currentPos = newPos(currentPos, bendDirection);
+				}
 				BlockPos oppositeCurrentPos = currentPos.offset(direction.getOpposite(), 1);
 
 				// PLACE LOGS
@@ -113,7 +117,7 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 				// PLACE LEAVES
 				if (coveredWithLeaves) {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(1, 2), false));
-				} else if (level == 2 && i == length - 1) {
+				} else if (level != 0 && i == length - 1) {
 					list.add(new FoliagePlacer.TreeNode(currentPos.up(), random.nextInt(1, 2), false));
 				}
 
@@ -156,16 +160,16 @@ public class BetterOakTrunkPlacer extends TrunkPlacer {
 			return list;
 		}
 
-		private BlockPos newPos(BlockPos currentPos, Direction bendDirection, double directionProbability) {
-			return currentPos.offset(this.direction, random.nextDouble() < directionProbability ? 1 : 0).offset(bendDirection, (random.nextDouble() < firstBendiness && random.nextDouble() < directionProbability) ? 1 : 0).offset(switch (direction) {
-				case NORTH, SOUTH, EAST, WEST -> Direction.UP;
-				case UP -> Direction.byId(random.nextInt(4) + 2);
-				case DOWN -> Direction.NORTH;
-			}, random.nextDouble() < secondBendiness ? 1 : 0);
-		}
-
 		private BlockPos newPos(BlockPos currentPos, Direction bendDirection) {
-			return newPos(currentPos, bendDirection, 1d);
+			Direction secondBendDirection = Direction.UP;
+			if (direction == Direction.UP || direction == Direction.DOWN) {
+				secondBendDirection = Direction.byId(random.nextInt(4) + 2);
+				while (secondBendDirection == bendDirection) secondBendDirection = Direction.byId(random.nextInt(4) + 2);
+			}
+			return currentPos
+				.offset(this.direction, 1)
+				.offset(bendDirection, random.nextDouble() < firstBendiness ? 1 : 0)
+				.offset(secondBendDirection, random.nextDouble() < secondBendiness ? 1 : 0);
 		}
 
 		private void setLog(BlockPos pos, Direction direction) {

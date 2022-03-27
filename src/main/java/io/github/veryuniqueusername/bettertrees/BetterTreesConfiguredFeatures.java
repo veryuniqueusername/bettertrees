@@ -379,7 +379,7 @@ public class BetterTreesConfiguredFeatures {
 			SimpleBlockStateProviderInvoker.invokeCtor(Blocks.OAK_WOOD.getDefaultState()),
 			new BetterOakTrunkPlacer(5, 5, 0),
 			SimpleBlockStateProviderInvoker.invokeCtor((dead ? Blocks.AIR : Blocks.OAK_LEAVES).getDefaultState()),
-			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(2, 4), ConstantIntProvider.create(0), BiasedToBottomIntProvider.create(3, 4), 40),
+			new RandomSpreadFoliagePlacer(BiasedToBottomIntProvider.create(2, 3), ConstantIntProvider.create(0), BiasedToBottomIntProvider.create(3, 4), 50),
 			new TwoLayersFeatureSize(5, 0, 5)
 		);
 	}

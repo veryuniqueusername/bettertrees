@@ -203,11 +203,15 @@ public class BetterMegaSpruceTrunkPlacer extends GiantTrunkPlacer {
 		}
 
 		private BlockPos newPos(BlockPos currentPos, Direction bendDirection) {
-			return currentPos.offset(this.direction, 1).offset(bendDirection, random.nextDouble() < firstBendiness ? 1 : 0).offset(switch (direction) {
-				case NORTH, SOUTH, EAST, WEST -> Direction.UP;
-				case UP -> Direction.SOUTH;
-				case DOWN -> Direction.NORTH;
-			}, random.nextDouble() < secondBendiness ? 1 : 0);
+			Direction secondBendDirection = Direction.UP;
+			if (direction == Direction.UP || direction == Direction.DOWN) {
+				secondBendDirection = Direction.byId(random.nextInt(4) + 2);
+				while (secondBendDirection == bendDirection) secondBendDirection = Direction.byId(random.nextInt(4) + 2);
+			}
+			return currentPos
+				.offset(this.direction, 1)
+				.offset(bendDirection, random.nextDouble() < firstBendiness ? 1 : 0)
+				.offset(secondBendDirection, random.nextDouble() < secondBendiness ? 1 : 0);
 		}
 
 		private BlockPos getBranchPos(BlockPos currentPos, Direction newDirection) {
